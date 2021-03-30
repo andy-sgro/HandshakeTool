@@ -4,7 +4,6 @@ Handshake Tool UI:
 	- welcome screen
 		- new/open button
 	- read xmls to create boxes
-	- put thumbnails inside scrollview
 	- unify UI so viewport is in the middle at all times
 	- add crosshairs with inverted colours
 Handshake Engine Algorithm:

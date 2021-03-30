@@ -13,8 +13,7 @@ namespace ImageScroller
 {
 	public partial class Form1 : Form
 	{
-        private FolderBrowserDialog folderBrowserDlg = new System.Windows.Forms.FolderBrowserDialog();
-        private bool imageselected = false;
+        private FolderBrowserDialog folderBrowserDlg = new FolderBrowserDialog();
         int TotalImageFiles = 0;
         int locX = 40;
         int locY = 10;
@@ -24,8 +23,6 @@ namespace ImageScroller
         public string[] AllImageFileNames = null;
         int sizeWidth = 130;
         private int CurrentIndex = 0;
-        private int StartIndex = 0;
-        private int LastIndex = 0;
         int sizeHeight = 130;
         int SELECTED_PADDING = 2;
 
@@ -52,7 +49,6 @@ namespace ImageScroller
         {
             DirectoryInfo Folder;
             DialogResult result = this.folderBrowserDlg.ShowDialog();
-            imageselected = false;
             if (result == DialogResult.OK)
             {
                 Folder = new DirectoryInfo(folderBrowserDlg.SelectedPath);
@@ -66,7 +62,6 @@ namespace ImageScroller
                 filmStrip.Controls.Clear();
                 if (imageFiles.Length > 0)
                 {
-                    imageselected = true;
                     TotalImageFiles = imageFiles.Length;
                 }
                 else
@@ -90,8 +85,6 @@ namespace ImageScroller
 
                 }
                 CurrentIndex = 0;
-                StartIndex = 0;
-                LastIndex = 0;
             }
         }
 

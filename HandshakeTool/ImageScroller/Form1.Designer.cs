@@ -29,66 +29,87 @@ namespace ImageScroller
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.filmStrip = new System.Windows.Forms.Panel();
-			this.panel = new System.Windows.Forms.Panel();
-			this.pictureBox = new System.Windows.Forms.PictureBox();
-			this.panel.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
+			this.filmstrip = new System.Windows.Forms.Panel();
+			this.tabControl1 = new System.Windows.Forms.TabControl();
+			this.tabPage1 = new System.Windows.Forms.TabPage();
+			this.tabPage2 = new System.Windows.Forms.TabPage();
+			this.viewport = new System.Windows.Forms.PictureBox();
+			this.tabControl1.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.viewport)).BeginInit();
 			this.SuspendLayout();
 			// 
-			// pnlThumb
+			// filmstrip
 			// 
-			this.filmStrip.AutoScroll = true;
-			this.filmStrip.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-			this.filmStrip.Dock = System.Windows.Forms.DockStyle.Bottom;
-			this.filmStrip.Location = new System.Drawing.Point(0, 498);
-			this.filmStrip.Name = "pnlThumb";
-			this.filmStrip.Size = new System.Drawing.Size(1185, 224);
-			this.filmStrip.TabIndex = 0;
+			this.filmstrip.CausesValidation = false;
+			this.filmstrip.Dock = System.Windows.Forms.DockStyle.Bottom;
+			this.filmstrip.Location = new System.Drawing.Point(0, 554);
+			this.filmstrip.Name = "filmstrip";
+			this.filmstrip.Size = new System.Drawing.Size(1185, 168);
+			this.filmstrip.TabIndex = 0;
 			// 
-			// panel
+			// tabControl1
 			// 
-			this.panel.AutoScroll = true;
-			this.panel.AutoSize = true;
-			this.panel.BackColor = System.Drawing.Color.Black;
-			this.panel.Controls.Add(this.pictureBox);
-			this.panel.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.panel.Location = new System.Drawing.Point(0, 0);
-			this.panel.Name = "panel";
-			this.panel.Size = new System.Drawing.Size(1185, 498);
-			this.panel.TabIndex = 1;
+			this.tabControl1.Controls.Add(this.tabPage1);
+			this.tabControl1.Controls.Add(this.tabPage2);
+			this.tabControl1.Dock = System.Windows.Forms.DockStyle.Left;
+			this.tabControl1.Location = new System.Drawing.Point(0, 0);
+			this.tabControl1.Name = "tabControl1";
+			this.tabControl1.SelectedIndex = 0;
+			this.tabControl1.Size = new System.Drawing.Size(200, 554);
+			this.tabControl1.TabIndex = 1;
 			// 
-			// pictureBox
+			// tabPage1
 			// 
-			this.pictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.pictureBox.Location = new System.Drawing.Point(0, 0);
-			this.pictureBox.Name = "pictureBox";
-			this.pictureBox.Size = new System.Drawing.Size(1185, 498);
-			this.pictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-			this.pictureBox.TabIndex = 0;
-			this.pictureBox.TabStop = false;
+			this.tabPage1.Location = new System.Drawing.Point(4, 25);
+			this.tabPage1.Name = "tabPage1";
+			this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+			this.tabPage1.Size = new System.Drawing.Size(192, 525);
+			this.tabPage1.TabIndex = 0;
+			this.tabPage1.Text = "tabPage1";
+			this.tabPage1.UseVisualStyleBackColor = true;
+			// 
+			// tabPage2
+			// 
+			this.tabPage2.Location = new System.Drawing.Point(4, 25);
+			this.tabPage2.Name = "tabPage2";
+			this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+			this.tabPage2.Size = new System.Drawing.Size(192, 71);
+			this.tabPage2.TabIndex = 1;
+			this.tabPage2.Text = "tabPage2";
+			this.tabPage2.UseVisualStyleBackColor = true;
+			// 
+			// viewport
+			// 
+			this.viewport.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.viewport.Location = new System.Drawing.Point(200, 0);
+			this.viewport.Name = "viewport";
+			this.viewport.Size = new System.Drawing.Size(985, 554);
+			this.viewport.TabIndex = 2;
+			this.viewport.TabStop = false;
 			// 
 			// Form1
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(1185, 722);
-			this.Controls.Add(this.panel);
-			this.Controls.Add(this.filmStrip);
+			this.Controls.Add(this.viewport);
+			this.Controls.Add(this.tabControl1);
+			this.Controls.Add(this.filmstrip);
 			this.Name = "Form1";
 			this.Text = "Form1";
-			this.panel.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.pictureBox)).EndInit();
+			this.tabControl1.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)(this.viewport)).EndInit();
 			this.ResumeLayout(false);
-			this.PerformLayout();
 
 		}
 
 		#endregion
 
-		private System.Windows.Forms.Panel filmStrip;
-		private System.Windows.Forms.Panel panel;
-		private System.Windows.Forms.PictureBox pictureBox;
+		private System.Windows.Forms.Panel filmstrip;
+		private System.Windows.Forms.TabControl tabControl1;
+		private System.Windows.Forms.TabPage tabPage1;
+		private System.Windows.Forms.TabPage tabPage2;
+		private System.Windows.Forms.PictureBox viewport;
 	}
 }
 
