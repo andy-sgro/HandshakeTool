@@ -15,16 +15,19 @@ namespace ImageScroller
 	{
         private FolderBrowserDialog folderBrowserDlg = new System.Windows.Forms.FolderBrowserDialog();
         private bool imageselected = false;
-        int TotalimageFiles = 0;
+        int TotalImageFiles = 0;
         int locX = 40;
         int locY = 10;
-        PictureBox[] ctrl;
+        Panel[] bigThumbPanels;
+        Panel[] smallThumbPanels;
+        PictureBox[] thumbImages;
         public string[] AllImageFileNames = null;
         int sizeWidth = 130;
         private int CurrentIndex = 0;
         private int StartIndex = 0;
         private int LastIndex = 0;
         int sizeHeight = 130;
+        int SELECTED_PADDING = 2;
 
 
 
@@ -33,7 +36,7 @@ namespace ImageScroller
 			InitializeComponent();
             LoadImages();
 
-            foreach(PictureBox picture in ctrl)
+            foreach(PictureBox picture in thumbImages)
 			{
                 //picture.Click = 
 			}
@@ -42,7 +45,7 @@ namespace ImageScroller
 
         private void fillImage(int index)
 		{
-            picImageSlide.Image = Image.FromFile(AllImageFileNames[index]);
+            pictureBox.Image = Image.FromFile(AllImageFileNames[index]);
         }
 
         public void LoadImages()
@@ -60,11 +63,11 @@ namespace ImageScroller
                       .Concat(Folder.GetFiles("*.png"))
                       .Concat(Folder.GetFiles("*.jpeg"))
                       .Concat(Folder.GetFiles("*.bmp")).ToArray(); // Here we filter all image files 
-                pnlThumb.Controls.Clear();
+                filmStrip.Controls.Clear();
                 if (imageFiles.Length > 0)
                 {
                     imageselected = true;
-                    TotalimageFiles = imageFiles.Length;
+                    TotalImageFiles = imageFiles.Length;
                 }
                 else
                 {
@@ -73,8 +76,10 @@ namespace ImageScroller
                 int locnewX = locX;
                 int locnewY = locY;
 
-                ctrl = new PictureBox[TotalimageFiles];
-                AllImageFileNames = new String[TotalimageFiles];
+                thumbImages = new PictureBox[TotalImageFiles];
+                bigThumbPanels = new Panel[TotalImageFiles];
+                smallThumbPanels = new Panel[TotalImageFiles];
+                AllImageFileNames = new string[TotalImageFiles];
                 int imageindexs = 0;
                 foreach (FileInfo img in imageFiles)
                 {
@@ -92,24 +97,44 @@ namespace ImageScroller
 
         private void loadImagestoPanel(String imageName, String ImageFullName, int newLocX, int newLocY, int imageIndex)
         {
-            ctrl[imageIndex] = new PictureBox();
-            ctrl[imageIndex].Name = "thumbnail" + imageIndex;
-            ctrl[imageIndex].Image = Image.FromFile(ImageFullName);
-            ctrl[imageIndex].BackColor = Color.Black;
-            ctrl[imageIndex].Location = new Point(newLocX, newLocY);
-            ctrl[imageIndex].Size = new System.Drawing.Size(sizeWidth - 30, sizeHeight - 60);
-            ctrl[imageIndex].BorderStyle = BorderStyle.None;
-            ctrl[imageIndex].SizeMode = PictureBoxSizeMode.StretchImage;
-            ctrl[imageIndex].MouseClick += fillImage;
-            pnlThumb.Controls.Add(ctrl[imageIndex]);
+            bigThumbPanels[imageIndex] = new Panel();
+            bigThumbPanels[imageIndex].Name = "thumbPanel" + imageIndex;
+            bigThumbPanels[imageIndex].BackColor = Color.Black;
+            bigThumbPanels[imageIndex].Location = new Point(newLocX, newLocY);
+            bigThumbPanels[imageIndex].Size = new Size(sizeWidth - 30, sizeHeight - 60);
+            bigThumbPanels[imageIndex].BorderStyle = BorderStyle.None;
+
+            smallThumbPanels[imageIndex] = new Panel();
+            smallThumbPanels[imageIndex].BackColor = Color.Black;
+            smallThumbPanels[imageIndex].Dock = DockStyle.Fill;
+            smallThumbPanels[imageIndex].Padding = new Padding(SELECTED_PADDING);
+
+            thumbImages[imageIndex] = new PictureBox();
+            thumbImages[imageIndex].MouseClick += fillImage;
+            thumbImages[imageIndex].Name = "thumbImage" + imageIndex;
+            thumbImages[imageIndex].Image = Image.FromFile(ImageFullName);
+            thumbImages[imageIndex].BackColor = Color.Black;
+            thumbImages[imageIndex].Location = new Point(0, 0);
+            thumbImages[imageIndex].BorderStyle = BorderStyle.None;
+            thumbImages[imageIndex].SizeMode = PictureBoxSizeMode.Zoom;
+            thumbImages[imageIndex].Dock = DockStyle.Fill;
+
+            filmStrip.Controls.Add(bigThumbPanels[imageIndex]);
+            bigThumbPanels[imageIndex].Controls.Add(smallThumbPanels[imageIndex]);
+            smallThumbPanels[imageIndex].Controls.Add(thumbImages[imageIndex]);
 
 
         }
 
 		private void fillImage(object sender, EventArgs e)
 		{
-            int index = int.Parse(((PictureBox)sender).Name.Remove(0, "thumbnail".Length));
+            smallThumbPanels[CurrentIndex].BackColor = Color.Black;
+
+            PictureBox picture = (PictureBox)sender;
+            int index = int.Parse(picture.Name.Remove(0, "thumbPanel".Length));
             fillImage(index);
+            CurrentIndex = index;
+            smallThumbPanels[index].BackColor = Color.White;
         }
 	}
 }
