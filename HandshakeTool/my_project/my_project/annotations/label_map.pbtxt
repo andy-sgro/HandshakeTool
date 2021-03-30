@@ -1,0 +1,63 @@
+item {
+    id: 1
+    name: 'five fingers up'
+}
+
+item {
+    id: 2
+    name: 'five fingers diagonal'
+}
+item {
+    id: 3
+    name: 'thumbs up'
+}
+
+item {
+    id: 4
+    name: 'one finger up'
+}
+
+item {
+    id: 5
+    name: 'flat hand'
+}
+
+item {
+    id: 6
+    name: 'ok'
+}
+
+item {
+    id: 7
+    name: 'two fingers up'
+}
+
+item {
+    id: 8
+    name: 'fist up'
+}
+
+item {
+    id: 9
+    name: 'back hand diagonal'
+}
+
+item {
+    id: 10
+    name: 'no1'
+}
+
+item {
+    id: 11
+    name: 'no2'
+}
+
+item {
+    id: 12
+    name: 'fist forward'
+}
+
+item {
+    id: 13
+    name: 'thanks'
+}
