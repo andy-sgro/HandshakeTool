@@ -26,6 +26,11 @@ namespace HandshakeTool
 		const int THUMB_WIDTH = 100;
 		const int THUMB_HEIGHT = 70;
 
+		bool showingBox = false;
+		bool drawingBox = false;
+		Point boxStart = new Point();
+		Point boxEnd = new Point();
+
 		int nextThumbX = FIRST_THUMB_X;
 		int nextThumbY = FIRST_THUMB_Y;
 
@@ -39,6 +44,95 @@ namespace HandshakeTool
 		private Image<Bgr, byte> img = null;
 		private Capture capture = null;
 		private bool appIsChangingTab = false;
+
+		private void showBoundingBox()
+		{
+			if (img != null)
+			{
+				Image<Bgr, byte> overlay = img.Copy();
+				Image<Bgr, byte> output = img.Copy();
+
+				if (showingBox)
+				{
+					//overlay(mainPicture, boxStart.X, boxStart.Y,
+					//	boxEnd.X - boxStart.X,
+					//	boxEnd.Y - boxStart.Y,
+					//	viewport, 0.3
+					//	);
+
+					float imgRatio = (float)img.Size.Width / (float)img.Size.Height;
+					float viewportRatio = (float)viewport.Width / (float)viewport.Height;
+
+
+					Size viewportImgSize = new Size();
+					float xBarSize = 0;
+					float yBarSize = 0;
+					float ratioDelta = Math.Abs(viewportRatio - imgRatio);
+					float barPercent = ratioDelta / viewportRatio;
+					//MessageBox.Show("ratio delta: " + ratioDelta);
+					int viewportWidth = 0;
+
+					if (viewportRatio > imgRatio)
+					{
+						viewportWidth = (int)Math.Round(viewport.Height * imgRatio);
+						viewportImgSize = new Size(viewportWidth, viewport.Height);
+						xBarSize = (viewport.Width - viewportWidth) / 2f;
+					}
+					else if (viewportRatio < imgRatio)
+					{
+						//yBarSize = (barPercent * viewport.Height) / 2f;
+						//viewportImgSize = new Size(viewport.Width, (int)Math.Round((float)viewport.Height - (xBarSize * 2f)));
+					}
+
+
+					float widthFactor = (float)overlay.Size.Width / viewportImgSize.Width;
+					float heightFactor = (float)overlay.Size.Height / viewportImgSize.Height;
+
+					lblImageWidth.Text = img.Size.Width.ToString();
+					lblViewportImageWidth.Text = viewportWidth.ToString();
+					lblViewportWidth.Text = viewport.Width.ToString();
+					lblXBarWidth.Text = xBarSize.ToString();
+
+					CvInvoke.Rectangle(overlay, new Rectangle(
+						(int)((boxStart.X * widthFactor) - xBarSize),
+						(int)((boxStart.Y * heightFactor) - yBarSize),
+						(int)((boxEnd.X - boxStart.X) * widthFactor),
+						(int)((boxEnd.Y - boxStart.Y) * heightFactor)),
+						new MCvScalar(255, 200, 10), -1);
+
+					CvInvoke.AddWeighted(overlay, 0.3, img, 0.7, 0, output);
+				}
+
+				Bitmap bmp = output.Bitmap;
+				viewport.Image = bmp;
+			}
+		}
+
+		private void viewport_MouseDown(object sender, MouseEventArgs e)
+		{
+			showingBox = true;
+			drawingBox = true;
+			boxStart.X = e.X;
+			boxStart.Y = e.Y;
+			boxEnd.X = e.X;
+			boxEnd.Y = e.Y;
+		}
+
+		private void viewport_MouseMove(object sender, MouseEventArgs e)
+		{
+			if (drawingBox)
+			{
+				boxEnd.X = e.X;
+				boxEnd.Y = e.Y;
+				showBoundingBox();
+			}
+		}
+
+		private void viewport_MouseUp(object sender, MouseEventArgs e)
+		{
+			drawingBox = false;
+			showBoundingBox();
+		}
 
 		enum tab
 		{
@@ -148,6 +242,7 @@ namespace HandshakeTool
 		{
 			disableCamera();
 			viewport.Image = Image.FromFile(AllImageFileNames[index]);
+			img = new Image<Bgr, byte>(AllImageFileNames[index]);
 		}
 
 		private void enableCamera()
@@ -299,5 +394,6 @@ namespace HandshakeTool
 				}
 			}
 		}
+
 	}
 }
