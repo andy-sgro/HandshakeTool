@@ -69,14 +69,14 @@ namespace HandshakeTool
 
 		private void shootBtn_Click(object sender, EventArgs e)
 		{
-			if (mainPage.ImageFolder == null)
-			{
-				mainPage.OpenImageFolder(null, null);
-			}
-			if (mainPage.ImageFolder != null)
-			{
-				Task.Run(() => takePhotos());
-			}
+			//if (mainPage.ImageFolder == null)
+			//{
+			//	mainPage.OpenImageFolder(null, null);
+			//}
+			//if (mainPage.ImageFolder != null)
+			//{
+			//	Task.Run(() => takePhotos());
+			//}
 		}
 
 		delegate void SetTextCallback(string text);
@@ -115,8 +115,8 @@ namespace HandshakeTool
 		{
 			DateTime now = DateTime.Now;
 			string date = now.ToString("s").Replace('T', '_').Replace(':', '-') + '-' + now.ToString("ffff");
-			string filepath = mainPage.ImageFolder + date + ".jpg";
-			img.Save(filepath);
+			//string filepath = mainPage.ImageFolder + date + ".jpg";
+			//img.Save(filepath);
 		}
 	}
 }

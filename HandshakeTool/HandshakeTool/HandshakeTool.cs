@@ -9,6 +9,9 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
 using System.Threading;
+using Emgu.CV;
+using Emgu.CV.CvEnum;
+using Emgu.CV.Structure;
 
 namespace HandshakeTool
 {
@@ -16,18 +19,35 @@ namespace HandshakeTool
 	{
 		private FolderBrowserDialog folderBrowserDlg = new FolderBrowserDialog();
 		int TotalImageFiles = 0;
-		int locX = 40;
-		int locY = 10;
+
+		const int FIRST_THUMB_X = 40;
+		const int FIRST_THUMB_Y = 10;
+		const int THUMB_SPACING = 10;
+		const int THUMB_WIDTH = 100;
+		const int THUMB_HEIGHT = 70;
+
+		int nextThumbX = FIRST_THUMB_X;
+		int nextThumbY = FIRST_THUMB_Y;
+
 		Panel[] bigThumbPanels;
 		Panel[] smallThumbPanels;
 		PictureBox[] thumbImages;
 		public string[] AllImageFileNames = null;
-		int sizeWidth = 130;
 		private int CurrentIndex = 0;
-		int sizeHeight = 130;
 		int SELECTED_PADDING = 2;
 		bool imageSelected = false;
+		private Image<Bgr, byte> img = null;
+		private Capture capture = null;
+		private bool appIsChangingTab = false;
 
+		enum tab
+		{
+			camera,
+			photoInfo
+		}
+
+
+		#region properties
 
 		private DirectoryInfo projectFolder
 		{
@@ -60,24 +80,38 @@ namespace HandshakeTool
 			}
 		}
 
-		public string ImageFolder { get; private set; } = null;
+		#endregion
+
 		private UserControl activeUserControl = null;
 
 
 		public HandshakeTool()
 		{
 			InitializeComponent();
-			LoadImages();
+			fillFilmstrip();
 
-			cameraIndex.SelectedIndex = 0;
+			cameraIndex.SelectedIndex = 1;
 
 			if (Global.ProjectFolder != null)
 			{
-				MessageBox.Show(projectFolder.FullName);
-				MessageBox.Show(imageFolder.FullName);
+				//MessageBox.Show(projectFolder.FullName);
+				//MessageBox.Show(imageFolder.FullName);
 			}
 
 		}
+
+		private void HandshakeTool_Load(object sender, EventArgs e)
+		{
+			enableCamera();
+		}
+
+		private void streaming(object sender, System.EventArgs e)
+		{
+			img = capture.QueryFrame().ToImage<Bgr, byte>();
+			Bitmap bmp = img.Bitmap;
+			viewport.Image = bmp;
+		}
+		
 
 		private void shootBtn_Click(object sender, EventArgs e)
 		{
@@ -87,29 +121,50 @@ namespace HandshakeTool
 
 		private void takePhotos()
 		{
-			for (int remainingPhotos = (int)numberOfShots.Value;
-				remainingPhotos > 0; --remainingPhotos)
+			int _numberOfShots = (int)numberOfShots.Value;
+			for (int i = 0; i < _numberOfShots; ++i)
 			{
 				Thread.Sleep((int)(timePerShots.Value * 1000));
 				saveImg();
+				progressBar.Value = (int)(((double)(i + 1) / _numberOfShots) * 100);
+				//MessageBox.Show(progressBar.Value.ToString());
+				progressBar.PerformStep();
 			}
+			progressBar.Value = 0;
+			MessageBox.Show("Photo capture is complete.");
+			progressBar.BackColor = Color.Black;
 		}
 
 		private void saveImg()
 		{
 			DateTime now = DateTime.Now;
 			string date = now.ToString("s").Replace('T', '_').Replace(':', '-') + '-' + now.ToString("ffff");
-			//string filepath = mainPage.ImageFolder + date + ".jpg";
-			//img.Save(filepath);
+			string filepath = imageFolder + "\\" + date + ".jpg";
+			img.Save(filepath);
 		}
 
 
-		private void fillImage(int index)
+		private void showcaseImage(int index)
 		{
+			disableCamera();
 			viewport.Image = Image.FromFile(AllImageFileNames[index]);
 		}
 
-		public void LoadImages()
+		private void enableCamera()
+		{
+			capture = new Capture(cameraIndex.SelectedIndex);
+			Application.Idle += streaming;
+		}
+
+		private void disableCamera()
+		{
+			Application.Idle -= streaming;
+			capture.Stop();
+			capture.Dispose();
+		}
+
+
+		public void fillFilmstrip()
 		{
 			//DialogResult result = this.folderBrowserDlg.ShowDialog();
 			imageSelected = false;
@@ -131,8 +186,7 @@ namespace HandshakeTool
 				{
 					return;
 				}
-				int locnewX = locX;
-				int locnewY = locY;
+				
 
 				thumbImages = new PictureBox[TotalImageFiles];
 				bigThumbPanels = new Panel[TotalImageFiles];
@@ -142,8 +196,8 @@ namespace HandshakeTool
 				foreach (FileInfo img in imageFiles)
 				{
 					AllImageFileNames[imageindexs] = img.FullName;
-					loadImagestoPanel(img.Name, img.FullName, locnewX, locnewY, imageindexs);
-					locnewX = locnewX + sizeWidth + 10;
+					appendFilmstrip(img.Name, img.FullName, imageindexs);
+					
 					imageindexs = imageindexs + 1;
 
 				}
@@ -151,13 +205,13 @@ namespace HandshakeTool
 			//}
 		}
 
-		private void loadImagestoPanel(String imageName, String ImageFullName, int newLocX, int newLocY, int imageIndex)
+		private void appendFilmstrip(string imageName, string ImageFullName, int imageIndex)
 		{
 			bigThumbPanels[imageIndex] = new Panel();
 			bigThumbPanels[imageIndex].Name = "thumbPanel" + imageIndex;
 			bigThumbPanels[imageIndex].BackColor = Color.Black;
-			bigThumbPanels[imageIndex].Location = new Point(newLocX, newLocY);
-			bigThumbPanels[imageIndex].Size = new Size(sizeWidth - 30, sizeHeight - 60);
+			bigThumbPanels[imageIndex].Location = new Point(nextThumbX, nextThumbY);
+			bigThumbPanels[imageIndex].Size = new Size(THUMB_WIDTH, THUMB_HEIGHT);
 			bigThumbPanels[imageIndex].BorderStyle = BorderStyle.None;
 
 			smallThumbPanels[imageIndex] = new Panel();
@@ -166,7 +220,7 @@ namespace HandshakeTool
 			smallThumbPanels[imageIndex].Padding = new Padding(SELECTED_PADDING);
 
 			thumbImages[imageIndex] = new PictureBox();
-			thumbImages[imageIndex].MouseClick += fillImage;
+			thumbImages[imageIndex].MouseClick += thumb_Click;
 			thumbImages[imageIndex].Name = "thumbImage" + imageIndex;
 			thumbImages[imageIndex].Image = Image.FromFile(ImageFullName);
 			thumbImages[imageIndex].BackColor = Color.Black;
@@ -179,18 +233,22 @@ namespace HandshakeTool
 			bigThumbPanels[imageIndex].Controls.Add(smallThumbPanels[imageIndex]);
 			smallThumbPanels[imageIndex].Controls.Add(thumbImages[imageIndex]);
 
-
+			nextThumbX += THUMB_WIDTH + THUMB_SPACING;
 		}
 
-		private void fillImage(object sender, EventArgs e)
+		private void thumb_Click(object sender, EventArgs e)
 		{
 			smallThumbPanels[CurrentIndex].BackColor = Color.Black;
 
 			PictureBox picture = (PictureBox)sender;
 			int index = int.Parse(picture.Name.Remove(0, "thumbPanel".Length));
-			fillImage(index);
+			showcaseImage(index);
 			CurrentIndex = index;
 			smallThumbPanels[index].BackColor = Color.White;
+
+			appIsChangingTab = true;
+			tabControl.SelectedIndex = (int)tab.photoInfo;
+			appIsChangingTab = false;
 		}
 
 		
@@ -223,6 +281,22 @@ namespace HandshakeTool
 			if (fileBrowser.ShowDialog() == DialogResult.OK)
 			{
 				
+			}
+		}
+
+		private void tabChanged(object sender, EventArgs e)
+		{
+			if (!appIsChangingTab)
+			{
+				if (tabControl.SelectedIndex == (int)tab.camera)
+				{
+					smallThumbPanels[CurrentIndex].BackColor = Color.Black;
+					enableCamera();
+				}
+				else if (tabControl.SelectedIndex == (int)tab.photoInfo)
+				{
+					showcaseImage(0);
+				}
 			}
 		}
 	}
