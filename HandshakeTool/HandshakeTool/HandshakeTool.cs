@@ -45,7 +45,7 @@ namespace HandshakeTool
 		private Capture capture = null;
 		private bool appIsChangingTab = false;
 
-		private void showBoundingBox()
+		private void drawBoundingBox()
 		{
 			if (img != null)
 			{
@@ -55,10 +55,10 @@ namespace HandshakeTool
 				if (showingBox)
 				{
 					CvInvoke.Rectangle(overlay, new Rectangle(
-						(int)boxStart.X,
-						(int)boxStart.Y,
-						(int)(boxEnd.X - boxStart.X),
-						(int)(boxEnd.Y - boxStart.Y)),
+						boxStart.X,
+						boxStart.Y,
+						(boxEnd.X - boxStart.X),
+						(boxEnd.Y - boxStart.Y)),
 						new MCvScalar(255, 200, 10), -1);
 
 					CvInvoke.AddWeighted(overlay, 0.3, img, 0.7, 0, output);
@@ -74,44 +74,44 @@ namespace HandshakeTool
 			// scale
 			float widthFactor = (float)img.Width / viewport.Width;
 			float heightFactor = (float)img.Height / viewport.Height;
-			pt.X = (int)Math.Round(pt.X * widthFactor);
-			pt.Y = (int)Math.Round(pt.Y * heightFactor);
+			float x = pt.X * widthFactor;
+			float y = pt.Y * heightFactor;
 
 			float imgRatio = (float)img.Width / img.Height;
 			float viewportRatio = (float)viewport.Width / viewport.Height;
-
+			
 			// if it's letterboxed horizontally
 			if (viewportRatio > imgRatio)
 			{
 				// scale horizontally
 				float viewportImgWidth = (viewport.Height * imgRatio);
-				pt.X = (int)(pt.X * (viewport.Width / viewportImgWidth));
+				x *= (viewport.Width / viewportImgWidth);
 
 				// translate x
 				float xBarViewportWidth = (viewport.Width - viewportImgWidth) / 2f;
 				float xBarPercent = xBarViewportWidth / viewportImgWidth;
 				float xBarImgWidth = img.Width * xBarPercent;
-				pt = new Point(pt.X - (int)Math.Round(xBarImgWidth), pt.Y);
+				x -= xBarImgWidth;
 			}
 			// if it's letterboxed vertically
 			else if (viewportRatio < imgRatio)
 			{
 				// scale vertically
 				float viewportImgHeight = (viewport.Width * (1 / imgRatio));
-				pt.Y = (int)(pt.Y * (viewport.Height / viewportImgHeight));
+				y *= (viewport.Height / viewportImgHeight);
 
 				// translate y
 				float yBarViewportHeight = (viewport.Height - viewportImgHeight) / 2f;
 				float yBarPercent = yBarViewportHeight / viewportImgHeight;
 				float yBarImgHeight = img.Height * yBarPercent;
-				pt = new Point(pt.X, pt.Y - (int)Math.Round(yBarImgHeight));
+				y -= yBarImgHeight;
 			}
 
 			//clamp
-			return new Point(clamp(pt.X, 0, img.Width), clamp(pt.Y, 0, img.Height));
+			return new Point(clamp(x, 0, img.Width), clamp(y, 0, img.Height));
 		}
 
-		private int clamp(int input, int min, int max)
+		private int clamp(float input, int min, int max)
 		{
 			if (input < min)
 			{
@@ -121,7 +121,7 @@ namespace HandshakeTool
 			{
 				input = max;
 			}
-			return input;
+			return (int)Math.Round(input);
 		}
 
 
@@ -143,14 +143,14 @@ namespace HandshakeTool
 			if (drawingBox)
 			{
 				boxEnd = screenToImage(e.Location);
-				showBoundingBox();
+				drawBoundingBox();
 			}
 		}
 
 		private void viewport_MouseUp(object sender, MouseEventArgs e)
 		{
 			drawingBox = false;
-			showBoundingBox();
+			drawBoundingBox();
 		}
 
 		enum tab

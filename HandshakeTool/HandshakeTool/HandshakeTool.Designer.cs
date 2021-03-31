@@ -52,18 +52,10 @@ namespace HandshakeTool
 			this.dsafae = new System.Windows.Forms.Label();
 			this.label1 = new System.Windows.Forms.Label();
 			this.tabPage2 = new System.Windows.Forms.TabPage();
-			this.label5 = new System.Windows.Forms.Label();
-			this.label4 = new System.Windows.Forms.Label();
-			this.label3 = new System.Windows.Forms.Label();
 			this.textBox1 = new System.Windows.Forms.TextBox();
 			this.label2 = new System.Windows.Forms.Label();
 			this.viewport = new System.Windows.Forms.PictureBox();
 			this.progressBar = new System.Windows.Forms.ProgressBar();
-			this.lblViewportWidth = new System.Windows.Forms.Label();
-			this.lblViewportImageWidth = new System.Windows.Forms.Label();
-			this.lblImageWidth = new System.Windows.Forms.Label();
-			this.label6 = new System.Windows.Forms.Label();
-			this.lblXBarWidth = new System.Windows.Forms.Label();
 			this.menuStrip1.SuspendLayout();
 			this.tabControl.SuspendLayout();
 			this.Webcam.SuspendLayout();
@@ -299,14 +291,6 @@ namespace HandshakeTool
 			// 
 			// tabPage2
 			// 
-			this.tabPage2.Controls.Add(this.lblXBarWidth);
-			this.tabPage2.Controls.Add(this.label6);
-			this.tabPage2.Controls.Add(this.lblImageWidth);
-			this.tabPage2.Controls.Add(this.lblViewportImageWidth);
-			this.tabPage2.Controls.Add(this.lblViewportWidth);
-			this.tabPage2.Controls.Add(this.label5);
-			this.tabPage2.Controls.Add(this.label4);
-			this.tabPage2.Controls.Add(this.label3);
 			this.tabPage2.Controls.Add(this.textBox1);
 			this.tabPage2.Controls.Add(this.label2);
 			this.tabPage2.Location = new System.Drawing.Point(4, 25);
@@ -316,33 +300,6 @@ namespace HandshakeTool
 			this.tabPage2.TabIndex = 1;
 			this.tabPage2.Text = "Image Info";
 			this.tabPage2.UseVisualStyleBackColor = true;
-			// 
-			// label5
-			// 
-			this.label5.AutoSize = true;
-			this.label5.Location = new System.Drawing.Point(59, 362);
-			this.label5.Name = "label5";
-			this.label5.Size = new System.Drawing.Size(86, 17);
-			this.label5.TabIndex = 4;
-			this.label5.Text = "image width:";
-			// 
-			// label4
-			// 
-			this.label4.AutoSize = true;
-			this.label4.Location = new System.Drawing.Point(59, 269);
-			this.label4.Name = "label4";
-			this.label4.Size = new System.Drawing.Size(142, 17);
-			this.label4.TabIndex = 3;
-			this.label4.Text = "viewport image width:";
-			// 
-			// label3
-			// 
-			this.label3.AutoSize = true;
-			this.label3.Location = new System.Drawing.Point(56, 194);
-			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(100, 17);
-			this.label3.TabIndex = 2;
-			this.label3.Text = "viewport width:";
 			// 
 			// textBox1
 			// 
@@ -384,51 +341,6 @@ namespace HandshakeTool
 			this.progressBar.Size = new System.Drawing.Size(1359, 5);
 			this.progressBar.Step = 1;
 			this.progressBar.TabIndex = 7;
-			// 
-			// lblViewportWidth
-			// 
-			this.lblViewportWidth.AutoSize = true;
-			this.lblViewportWidth.Location = new System.Drawing.Point(59, 231);
-			this.lblViewportWidth.Name = "lblViewportWidth";
-			this.lblViewportWidth.Size = new System.Drawing.Size(112, 17);
-			this.lblViewportWidth.TabIndex = 5;
-			this.lblViewportWidth.Text = "lblViewportWidth";
-			// 
-			// lblViewportImageWidth
-			// 
-			this.lblViewportImageWidth.AutoSize = true;
-			this.lblViewportImageWidth.Location = new System.Drawing.Point(59, 318);
-			this.lblViewportImageWidth.Name = "lblViewportImageWidth";
-			this.lblViewportImageWidth.Size = new System.Drawing.Size(46, 17);
-			this.lblViewportImageWidth.TabIndex = 6;
-			this.lblViewportImageWidth.Text = "label7";
-			// 
-			// lblImageWidth
-			// 
-			this.lblImageWidth.AutoSize = true;
-			this.lblImageWidth.Location = new System.Drawing.Point(62, 408);
-			this.lblImageWidth.Name = "lblImageWidth";
-			this.lblImageWidth.Size = new System.Drawing.Size(46, 17);
-			this.lblImageWidth.TabIndex = 7;
-			this.lblImageWidth.Text = "label8";
-			// 
-			// label6
-			// 
-			this.label6.AutoSize = true;
-			this.label6.Location = new System.Drawing.Point(59, 453);
-			this.label6.Name = "label6";
-			this.label6.Size = new System.Drawing.Size(76, 17);
-			this.label6.TabIndex = 8;
-			this.label6.Text = "xBar width:";
-			// 
-			// lblXBarWidth
-			// 
-			this.lblXBarWidth.AutoSize = true;
-			this.lblXBarWidth.Location = new System.Drawing.Point(59, 499);
-			this.lblXBarWidth.Name = "lblXBarWidth";
-			this.lblXBarWidth.Size = new System.Drawing.Size(46, 17);
-			this.lblXBarWidth.TabIndex = 9;
-			this.lblXBarWidth.Text = "label7";
 			// 
 			// HandshakeTool
 			// 
@@ -490,14 +402,6 @@ namespace HandshakeTool
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.Button shootBtn;
 		private System.Windows.Forms.ProgressBar progressBar;
-		private System.Windows.Forms.Label label5;
-		private System.Windows.Forms.Label label4;
-		private System.Windows.Forms.Label label3;
-		private System.Windows.Forms.Label lblImageWidth;
-		private System.Windows.Forms.Label lblViewportImageWidth;
-		private System.Windows.Forms.Label lblViewportWidth;
-		private System.Windows.Forms.Label lblXBarWidth;
-		private System.Windows.Forms.Label label6;
 	}
 }
 
