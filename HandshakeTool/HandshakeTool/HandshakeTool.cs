@@ -38,7 +38,7 @@ namespace HandshakeTool
 		Panel[] smallThumbPanels;
 		PictureBox[] thumbImages;
 		public string[] AllImageFileNames = null;
-		private int CurrentIndex = 0;
+		private int currentIndex = 0;
 		int SELECTED_PADDING = 2;
 		bool imageSelected = false;
 		private Image<Bgr, byte> img = null;
@@ -259,9 +259,13 @@ namespace HandshakeTool
 
 		private void showcaseImage(int index)
 		{
+			smallThumbPanels[currentIndex].BackColor = Color.Black;
 			disableCamera();
 			viewport.Image = Image.FromFile(AllImageFileNames[index]);
 			img = new Image<Bgr, byte>(AllImageFileNames[index]);
+
+			currentIndex = index;
+			smallThumbPanels[index].BackColor = Color.White;
 		}
 
 		private void enableCamera()
@@ -315,7 +319,7 @@ namespace HandshakeTool
 					imageindexs = imageindexs + 1;
 
 				}
-				CurrentIndex = 0;
+				currentIndex = 0;
 			//}
 		}
 
@@ -352,13 +356,11 @@ namespace HandshakeTool
 
 		private void thumb_Click(object sender, EventArgs e)
 		{
-			smallThumbPanels[CurrentIndex].BackColor = Color.Black;
+			
 
 			PictureBox picture = (PictureBox)sender;
 			int index = int.Parse(picture.Name.Remove(0, "thumbPanel".Length));
 			showcaseImage(index);
-			CurrentIndex = index;
-			smallThumbPanels[index].BackColor = Color.White;
 
 			appIsChangingTab = true;
 			tabControl.SelectedIndex = (int)tab.photoInfo;
@@ -400,17 +402,29 @@ namespace HandshakeTool
 
 		private void tabChanged(object sender, EventArgs e)
 		{
-			if (!appIsChangingTab)
+			
+			if (tabControl.SelectedIndex == (int)tab.camera)
 			{
-				if (tabControl.SelectedIndex == (int)tab.camera)
+				if (!appIsChangingTab)
 				{
-					smallThumbPanels[CurrentIndex].BackColor = Color.Black;
+					smallThumbPanels[currentIndex].BackColor = Color.Black;
 					enableCamera();
 				}
-				else if (tabControl.SelectedIndex == (int)tab.photoInfo)
+				viewport.Cursor = Cursors.Default;
+				viewport.MouseDown -= viewport_MouseDown;
+				viewport.MouseUp -= viewport_MouseUp;
+				viewport.MouseMove -= viewport_MouseMove;
+			}
+			else if (tabControl.SelectedIndex == (int)tab.photoInfo)
+			{
+				if (!appIsChangingTab)
 				{
-					showcaseImage(0);
+					showcaseImage(currentIndex);
 				}
+				viewport.Cursor = Cursors.Cross;
+				viewport.MouseDown += viewport_MouseDown;
+				viewport.MouseUp += viewport_MouseUp;
+				viewport.MouseMove += viewport_MouseMove;
 			}
 		}
 
