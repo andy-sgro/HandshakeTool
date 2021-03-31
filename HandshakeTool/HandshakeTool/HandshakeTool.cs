@@ -54,50 +54,11 @@ namespace HandshakeTool
 
 				if (showingBox)
 				{
-					//overlay(mainPicture, boxStart.X, boxStart.Y,
-					//	boxEnd.X - boxStart.X,
-					//	boxEnd.Y - boxStart.Y,
-					//	viewport, 0.3
-					//	);
-
-					float imgRatio = (float)img.Size.Width / (float)img.Size.Height;
-					float viewportRatio = (float)viewport.Width / (float)viewport.Height;
-
-
-					Size viewportImgSize = new Size();
-					float xBarSize = 0;
-					float yBarSize = 0;
-					float ratioDelta = Math.Abs(viewportRatio - imgRatio);
-					float barPercent = ratioDelta / viewportRatio;
-					//MessageBox.Show("ratio delta: " + ratioDelta);
-					int viewportWidth = 0;
-
-					if (viewportRatio > imgRatio)
-					{
-						viewportWidth = (int)Math.Round(viewport.Height * imgRatio);
-						viewportImgSize = new Size(viewportWidth, viewport.Height);
-						xBarSize = (viewport.Width - viewportWidth) / 2f;
-					}
-					else if (viewportRatio < imgRatio)
-					{
-						//yBarSize = (barPercent * viewport.Height) / 2f;
-						//viewportImgSize = new Size(viewport.Width, (int)Math.Round((float)viewport.Height - (xBarSize * 2f)));
-					}
-
-
-					float widthFactor = (float)overlay.Size.Width / viewportImgSize.Width;
-					float heightFactor = (float)overlay.Size.Height / viewportImgSize.Height;
-
-					lblImageWidth.Text = img.Size.Width.ToString();
-					lblViewportImageWidth.Text = viewportWidth.ToString();
-					lblViewportWidth.Text = viewport.Width.ToString();
-					lblXBarWidth.Text = xBarSize.ToString();
-
 					CvInvoke.Rectangle(overlay, new Rectangle(
-						(int)((boxStart.X * widthFactor) - xBarSize),
-						(int)((boxStart.Y * heightFactor) - yBarSize),
-						(int)((boxEnd.X - boxStart.X) * widthFactor),
-						(int)((boxEnd.Y - boxStart.Y) * heightFactor)),
+						(int)boxStart.X,
+						(int)boxStart.Y,
+						(int)(boxEnd.X - boxStart.X),
+						(int)(boxEnd.Y - boxStart.Y)),
 						new MCvScalar(255, 200, 10), -1);
 
 					CvInvoke.AddWeighted(overlay, 0.3, img, 0.7, 0, output);
@@ -108,22 +69,80 @@ namespace HandshakeTool
 			}
 		}
 
+		private Point screenToImage(Point pt)
+		{
+			// scale
+			float widthFactor = (float)img.Width / viewport.Width;
+			float heightFactor = (float)img.Height / viewport.Height;
+			pt.X = (int)Math.Round(pt.X * widthFactor);
+			pt.Y = (int)Math.Round(pt.Y * heightFactor);
+
+			float imgRatio = (float)img.Width / img.Height;
+			float viewportRatio = (float)viewport.Width / viewport.Height;
+
+			// if it's letterboxed horizontally
+			if (viewportRatio > imgRatio)
+			{
+				// scale horizontally
+				float viewportImgWidth = (viewport.Height * imgRatio);
+				pt.X = (int)(pt.X * (viewport.Width / viewportImgWidth));
+
+				// translate x
+				float xBarViewportWidth = (viewport.Width - viewportImgWidth) / 2f;
+				float xBarPercent = xBarViewportWidth / viewportImgWidth;
+				float xBarImgWidth = img.Width * xBarPercent;
+				pt = new Point(pt.X - (int)Math.Round(xBarImgWidth), pt.Y);
+			}
+			// if it's letterboxed vertically
+			else if (viewportRatio < imgRatio)
+			{
+				// scale vertically
+				float viewportImgHeight = (viewport.Width * (1 / imgRatio));
+				pt.Y = (int)(pt.Y * (viewport.Height / viewportImgHeight));
+
+				// translate y
+				float yBarViewportHeight = (viewport.Height - viewportImgHeight) / 2f;
+				float yBarPercent = yBarViewportHeight / viewportImgHeight;
+				float yBarImgHeight = img.Height * yBarPercent;
+				pt = new Point(pt.X, pt.Y - (int)Math.Round(yBarImgHeight));
+			}
+
+			//clamp
+			return new Point(clamp(pt.X, 0, img.Width), clamp(pt.Y, 0, img.Height));
+		}
+
+		private int clamp(int input, int min, int max)
+		{
+			if (input < min)
+			{
+				input = min;
+			}
+			else if (input > max)
+			{
+				input = max;
+			}
+			return input;
+		}
+
+
+
+
 		private void viewport_MouseDown(object sender, MouseEventArgs e)
 		{
-			showingBox = true;
-			drawingBox = true;
-			boxStart.X = e.X;
-			boxStart.Y = e.Y;
-			boxEnd.X = e.X;
-			boxEnd.Y = e.Y;
+			if (tabControl.SelectedIndex == (int)tab.photoInfo)
+			{
+				showingBox = true;
+				drawingBox = true;
+				boxStart = screenToImage(e.Location);
+				boxEnd = screenToImage(e.Location);
+			}
 		}
 
 		private void viewport_MouseMove(object sender, MouseEventArgs e)
 		{
 			if (drawingBox)
 			{
-				boxEnd.X = e.X;
-				boxEnd.Y = e.Y;
+				boxEnd = screenToImage(e.Location);
 				showBoundingBox();
 			}
 		}
