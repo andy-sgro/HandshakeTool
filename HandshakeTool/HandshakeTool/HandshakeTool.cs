@@ -17,6 +17,7 @@ namespace HandshakeTool
 {
 	public partial class HandshakeTool : Form
 	{
+		#region fields
 		private FolderBrowserDialog folderBrowserDlg = new FolderBrowserDialog();
 		int TotalImageFiles = 0;
 
@@ -26,6 +27,7 @@ namespace HandshakeTool
 		const int THUMB_WIDTH = 100;
 		const int THUMB_HEIGHT = 70;
 
+		bool showingCross = false;
 		bool showingBox = false;
 		bool drawingBox = false;
 		Point boxStart = new Point();
@@ -40,127 +42,19 @@ namespace HandshakeTool
 		public string[] AllImageFileNames = null;
 		private int currentIndex = 0;
 		int SELECTED_PADDING = 2;
-		bool imageSelected = false;
-		private Image<Bgr, byte> img = null;
+		private Image<Bgr, byte> mainImage = null;
+		private Image<Bgr, byte> boxImage = null;
 		private Capture capture = null;
 		private bool appIsChangingTab = false;
+		#endregion
 
-		private void drawBoundingBox()
-		{
-			if (img != null)
-			{
-				Image<Bgr, byte> overlay = img.Copy();
-				Image<Bgr, byte> output = img.Copy();
-
-				if (showingBox)
-				{
-					CvInvoke.Rectangle(overlay, new Rectangle(
-						boxStart.X,
-						boxStart.Y,
-						(boxEnd.X - boxStart.X),
-						(boxEnd.Y - boxStart.Y)),
-						new MCvScalar(255, 200, 10), -1);
-
-					CvInvoke.AddWeighted(overlay, 0.3, img, 0.7, 0, output);
-				}
-
-				Bitmap bmp = output.Bitmap;
-				viewport.Image = bmp;
-			}
-		}
-
-		private Point screenToImage(Point pt)
-		{
-			// scale
-			float widthFactor = (float)img.Width / viewport.Width;
-			float heightFactor = (float)img.Height / viewport.Height;
-			float x = pt.X * widthFactor;
-			float y = pt.Y * heightFactor;
-
-			float imgRatio = (float)img.Width / img.Height;
-			float viewportRatio = (float)viewport.Width / viewport.Height;
-			
-			// if it's letterboxed horizontally
-			if (viewportRatio > imgRatio)
-			{
-				// scale horizontally
-				float viewportImgWidth = (viewport.Height * imgRatio);
-				x *= (viewport.Width / viewportImgWidth);
-
-				// translate x
-				float xBarViewportWidth = (viewport.Width - viewportImgWidth) / 2f;
-				float xBarPercent = xBarViewportWidth / viewportImgWidth;
-				float xBarImgWidth = img.Width * xBarPercent;
-				x -= xBarImgWidth;
-			}
-			// if it's letterboxed vertically
-			else if (viewportRatio < imgRatio)
-			{
-				// scale vertically
-				float viewportImgHeight = (viewport.Width * (1 / imgRatio));
-				y *= (viewport.Height / viewportImgHeight);
-
-				// translate y
-				float yBarViewportHeight = (viewport.Height - viewportImgHeight) / 2f;
-				float yBarPercent = yBarViewportHeight / viewportImgHeight;
-				float yBarImgHeight = img.Height * yBarPercent;
-				y -= yBarImgHeight;
-			}
-
-			//clamp
-			return new Point(clamp(x, 0, img.Width), clamp(y, 0, img.Height));
-		}
-
-		private int clamp(float input, int min, int max)
-		{
-			if (input < min)
-			{
-				input = min;
-			}
-			else if (input > max)
-			{
-				input = max;
-			}
-			return (int)Math.Round(input);
-		}
-
-
-
-
-		private void viewport_MouseDown(object sender, MouseEventArgs e)
-		{
-			if (tabControl.SelectedIndex == (int)tab.photoInfo)
-			{
-				showingBox = true;
-				drawingBox = true;
-				boxStart = screenToImage(e.Location);
-				boxEnd = screenToImage(e.Location);
-			}
-		}
-
-		private void viewport_MouseMove(object sender, MouseEventArgs e)
-		{
-			if (drawingBox)
-			{
-				boxEnd = screenToImage(e.Location);
-				drawBoundingBox();
-			}
-		}
-
-		private void viewport_MouseUp(object sender, MouseEventArgs e)
-		{
-			drawingBox = false;
-			drawBoundingBox();
-		}
+		#region properties
 
 		enum tab
 		{
 			camera,
 			photoInfo
 		}
-
-
-		#region properties
 
 		private DirectoryInfo projectFolder
 		{
@@ -195,7 +89,159 @@ namespace HandshakeTool
 
 		#endregion
 
-		private UserControl activeUserControl = null;
+
+
+		private void drawCross(Point cursor)
+		{
+			Image<Bgr, byte> image = boxImage.Copy();
+
+			MCvScalar colour = new MCvScalar(0, 0, 0);
+
+			// horizontal line
+			Point left = new Point(0, cursor.Y);
+			Point right = new Point(image.Width, cursor.Y);
+			CvInvoke.Line(image, left, right, colour);
+
+			// vertical line
+			Point top = new Point(cursor.X, 0);
+			Point bottom = new Point(cursor.X, image.Height);
+			CvInvoke.Line(image, top, bottom, colour);
+
+			viewport.Image = image.Bitmap;
+		}
+
+		private void drawBoundingBox()
+		{
+			if (mainImage != null)
+			{
+				Image<Bgr, byte> overlay = mainImage.Copy();
+
+				if (showingBox)
+				{
+					CvInvoke.Rectangle(overlay, new Rectangle(
+						boxStart.X,
+						boxStart.Y,
+						(boxEnd.X - boxStart.X),
+						(boxEnd.Y - boxStart.Y)),
+						new MCvScalar(255, 200, 10), -1);
+
+					CvInvoke.AddWeighted(overlay, 0.3, mainImage, 0.7, 0, boxImage);
+				}
+
+				viewport.Image = boxImage.Bitmap;
+			}
+		}
+
+		private Point screenToImage(Point pt)
+		{
+			// scale
+			float widthFactor = (float)mainImage.Width / viewport.Width;
+			float heightFactor = (float)mainImage.Height / viewport.Height;
+			float x = pt.X * widthFactor;
+			float y = pt.Y * heightFactor;
+
+			float imgRatio = (float)mainImage.Width / mainImage.Height;
+			float viewportRatio = (float)viewport.Width / viewport.Height;
+			
+			// if it's letterboxed horizontally
+			if (viewportRatio > imgRatio)
+			{
+				// scale horizontally
+				float viewportImgWidth = (viewport.Height * imgRatio);
+				x *= (viewport.Width / viewportImgWidth);
+
+				// translate x
+				float xBarViewportWidth = (viewport.Width - viewportImgWidth) / 2f;
+				float xBarPercent = xBarViewportWidth / viewportImgWidth;
+				float xBarImgWidth = mainImage.Width * xBarPercent;
+				x -= xBarImgWidth;
+			}
+			// if it's letterboxed vertically
+			else if (viewportRatio < imgRatio)
+			{
+				// scale vertically
+				float viewportImgHeight = (viewport.Width * (1 / imgRatio));
+				y *= (viewport.Height / viewportImgHeight);
+
+				// translate y
+				float yBarViewportHeight = (viewport.Height - viewportImgHeight) / 2f;
+				float yBarPercent = yBarViewportHeight / viewportImgHeight;
+				float yBarImgHeight = mainImage.Height * yBarPercent;
+				y -= yBarImgHeight;
+			}
+
+			//clamp
+			return new Point(clamp(x, 0, mainImage.Width), clamp(y, 0, mainImage.Height));
+		}
+
+		
+
+		private int clamp(float input, int min, int max)
+		{
+			if (input < min)
+			{
+				input = min;
+			}
+			else if (input > max)
+			{
+				input = max;
+			}
+			return (int)Math.Round(input);
+		}
+
+
+
+
+		private void viewport_MouseDown(object sender, MouseEventArgs e)
+		{
+			if (tabControl.SelectedIndex == (int)tab.photoInfo)
+			{
+				showingBox = true;
+				drawingBox = true;
+				boxStart = screenToImage(e.Location);
+				boxEnd = screenToImage(e.Location);
+			}
+		}
+
+		private void viewport_MouseMove(object sender, MouseEventArgs e)
+		{
+			boxEnd = screenToImage(e.Location);
+
+			if (drawingBox)
+			{
+				drawBoundingBox();
+			}
+			if (showingCross)
+			{
+				drawCross(boxEnd);
+			}
+		}
+
+		private void viewport_MouseUp(object sender, MouseEventArgs e)
+		{
+			drawingBox = false;
+			drawBoundingBox();
+		}
+
+		private void viewport_MouseEnter(object sender, EventArgs e)
+		{
+			if (tabControl.SelectedIndex == (int)tab.photoInfo)
+			{
+				showingCross = true;
+			}
+		}
+
+		private void viewport_MouseLeave(object sender, EventArgs e)
+		{
+			if (tabControl.SelectedIndex == (int)tab.photoInfo)
+			{
+				drawBoundingBox();
+			}
+		}
+
+
+
+
 
 
 		public HandshakeTool()
@@ -220,8 +266,8 @@ namespace HandshakeTool
 
 		private void streaming(object sender, System.EventArgs e)
 		{
-			img = capture.QueryFrame().ToImage<Bgr, byte>();
-			Bitmap bmp = img.Bitmap;
+			mainImage = capture.QueryFrame().ToImage<Bgr, byte>();
+			Bitmap bmp = mainImage.Bitmap;
 			viewport.Image = bmp;
 		}
 		
@@ -253,7 +299,7 @@ namespace HandshakeTool
 			DateTime now = DateTime.Now;
 			string date = now.ToString("s").Replace('T', '_').Replace(':', '-') + '-' + now.ToString("ffff");
 			string filepath = imageFolder + "\\" + date + ".jpg";
-			img.Save(filepath);
+			mainImage.Save(filepath);
 		}
 
 
@@ -261,8 +307,9 @@ namespace HandshakeTool
 		{
 			smallThumbPanels[currentIndex].BackColor = Color.Black;
 			disableCamera();
-			viewport.Image = Image.FromFile(AllImageFileNames[index]);
-			img = new Image<Bgr, byte>(AllImageFileNames[index]);
+			mainImage = new Image<Bgr, byte>(AllImageFileNames[index]);
+			boxImage = mainImage.Copy();
+			viewport.Image = mainImage.Bitmap;
 
 			currentIndex = index;
 			smallThumbPanels[index].BackColor = Color.White;
@@ -285,7 +332,6 @@ namespace HandshakeTool
 		public void fillFilmstrip()
 		{
 			//DialogResult result = this.folderBrowserDlg.ShowDialog();
-			imageSelected = false;
 			//if (result == DialogResult.OK)
 			//{
 
@@ -297,7 +343,6 @@ namespace HandshakeTool
 				filmstrip.Controls.Clear();
 				if (imageFiles.Length > 0)
 				{
-					imageSelected = true;
 					TotalImageFiles = imageFiles.Length;
 				}
 				else
@@ -428,5 +473,6 @@ namespace HandshakeTool
 			}
 		}
 
+		
 	}
 }

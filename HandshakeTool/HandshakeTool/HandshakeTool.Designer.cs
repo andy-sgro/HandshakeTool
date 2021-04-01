@@ -327,6 +327,8 @@ namespace HandshakeTool
 			this.viewport.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
 			this.viewport.TabIndex = 6;
 			this.viewport.TabStop = false;
+			this.viewport.MouseEnter += new System.EventHandler(this.viewport_MouseEnter);
+			this.viewport.MouseLeave += new System.EventHandler(this.viewport_MouseLeave);
 			// 
 			// progressBar
 			// 
