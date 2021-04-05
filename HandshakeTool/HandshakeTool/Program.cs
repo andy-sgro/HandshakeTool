@@ -24,11 +24,11 @@ namespace HandshakeTool
 					.Remove(args[0].LastIndexOf('.'))
 					.Remove(0, args[0].LastIndexOf('\\'));
 				Files.ProjectFolder = new DirectoryInfo(args[0].Remove(args[0].LastIndexOf('\\')) + filename + '\\');
-				Application.Run(new HandshakeTool());
+				Application.Run(new _HandshakeTool());
 			}
 			else
 			{
-				Application.Run(new Welcome());
+				Application.Run(new _Welcome());
 			}
 		}
 	}

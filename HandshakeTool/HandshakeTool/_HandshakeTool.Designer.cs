@@ -1,7 +1,7 @@
 ﻿
 namespace HandshakeTool
 {
-	partial class HandshakeTool
+	partial class _HandshakeTool
 	{
 		/// <summary>
 		/// Required designer variable.

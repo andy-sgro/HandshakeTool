@@ -15,7 +15,7 @@ using Emgu.CV.Structure;
 
 namespace HandshakeTool
 {
-	public partial class HandshakeTool : Form
+	public partial class MainPage : UserControl
 	{
 		#region fields
 		private FolderBrowserDialog folderBrowserDlg = new FolderBrowserDialog();
@@ -48,7 +48,7 @@ namespace HandshakeTool
 		#endregion
 
 
-		public HandshakeTool()
+		public MainPage()
 		{
 			InitializeComponent();
 		}
@@ -111,7 +111,7 @@ namespace HandshakeTool
 
 			float imgRatio = (float)mainImage.Width / mainImage.Height;
 			float viewportRatio = (float)viewport.Width / viewport.Height;
-			
+
 			// if it's letterboxed horizontally
 			if (viewportRatio > imgRatio)
 			{
@@ -143,7 +143,7 @@ namespace HandshakeTool
 			return new Point(clamp(x, 0, mainImage.Width), clamp(y, 0, mainImage.Height));
 		}
 
-		
+
 
 		private int clamp(float input, int min, int max)
 		{
@@ -214,7 +214,7 @@ namespace HandshakeTool
 
 
 
-	
+
 
 		private void streaming(object sender, System.EventArgs e)
 		{
@@ -222,7 +222,7 @@ namespace HandshakeTool
 			Bitmap bmp = mainImage.Bitmap;
 			viewport.Image = bmp;
 		}
-		
+
 
 		private void shootBtn_Click(object sender, EventArgs e)
 		{
@@ -279,7 +279,7 @@ namespace HandshakeTool
 			mainImage = new Image<Bgr, byte>(imgFilepaths[index]);
 
 			boxImage = mainImage.Copy();
-			
+
 			showingBox = readXmlBox(index);
 			if (showingBox)
 			{
@@ -421,7 +421,7 @@ namespace HandshakeTool
 			appIsChangingTab = false;
 		}
 
-		
+
 
 
 		public void OpenImageFolder(object sender, EventArgs e)
@@ -450,13 +450,13 @@ namespace HandshakeTool
 			};
 			if (fileBrowser.ShowDialog() == DialogResult.OK)
 			{
-				
+
 			}
 		}
 
 		private void tabChanged(object sender, EventArgs e)
 		{
-			
+
 			if (tabControl.SelectedTab == cameraTab)
 			{
 				if (!appIsChangingTab)
