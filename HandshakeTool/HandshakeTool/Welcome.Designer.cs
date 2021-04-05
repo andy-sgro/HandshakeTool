@@ -29,24 +29,37 @@ namespace HandshakeTool
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.listView1 = new System.Windows.Forms.ListView();
+			this.newProjectBtn = new System.Windows.Forms.Button();
+			this.loadProjectBtn = new System.Windows.Forms.Button();
 			this.SuspendLayout();
 			// 
-			// listView1
+			// newProjectBtn
 			// 
-			this.listView1.HideSelection = false;
-			this.listView1.Location = new System.Drawing.Point(76, 56);
-			this.listView1.Name = "listView1";
-			this.listView1.Size = new System.Drawing.Size(121, 97);
-			this.listView1.TabIndex = 1;
-			this.listView1.UseCompatibleStateImageBehavior = false;
+			this.newProjectBtn.Location = new System.Drawing.Point(336, 107);
+			this.newProjectBtn.Name = "newProjectBtn";
+			this.newProjectBtn.Size = new System.Drawing.Size(108, 33);
+			this.newProjectBtn.TabIndex = 0;
+			this.newProjectBtn.Text = "New Project";
+			this.newProjectBtn.UseVisualStyleBackColor = true;
+			this.newProjectBtn.Click += new System.EventHandler(this.newProject);
+			// 
+			// loadProjectBtn
+			// 
+			this.loadProjectBtn.Location = new System.Drawing.Point(336, 197);
+			this.loadProjectBtn.Name = "loadProjectBtn";
+			this.loadProjectBtn.Size = new System.Drawing.Size(108, 33);
+			this.loadProjectBtn.TabIndex = 1;
+			this.loadProjectBtn.Text = "Load Project";
+			this.loadProjectBtn.UseVisualStyleBackColor = true;
+			this.loadProjectBtn.Click += new System.EventHandler(this.loadProject);
 			// 
 			// Welcome
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(800, 450);
-			this.Controls.Add(this.listView1);
+			this.Controls.Add(this.loadProjectBtn);
+			this.Controls.Add(this.newProjectBtn);
 			this.Name = "Welcome";
 			this.Text = "Welcome";
 			this.ResumeLayout(false);
@@ -55,6 +68,7 @@ namespace HandshakeTool
 
 		#endregion
 
-		private System.Windows.Forms.ListView listView1;
+		private System.Windows.Forms.Button newProjectBtn;
+		private System.Windows.Forms.Button loadProjectBtn;
 	}
 }

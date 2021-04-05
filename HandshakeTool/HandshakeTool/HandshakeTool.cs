@@ -19,7 +19,6 @@ namespace HandshakeTool
 	{
 		#region fields
 		private FolderBrowserDialog folderBrowserDlg = new FolderBrowserDialog();
-		int TotalImageFiles = 0;
 
 		const int FIRST_THUMB_X = 40;
 		const int FIRST_THUMB_Y = 10;
@@ -36,60 +35,30 @@ namespace HandshakeTool
 		int nextThumbX = FIRST_THUMB_X;
 		int nextThumbY = FIRST_THUMB_Y;
 
-		Panel[] bigThumbPanels;
-		Panel[] smallThumbPanels;
-		PictureBox[] thumbImages;
-		public string[] AllImageFileNames = null;
-		private int currentIndex = 0;
-		int SELECTED_PADDING = 2;
+		List<Panel> bigThumbPanels = new List<Panel>();
+		List<Panel> smallThumbPanels = new List<Panel>();
+		List<PictureBox> thumbImages = new List<PictureBox>();
+		public List<string> imgFilepaths = new List<string>();
+		private int currentIndex = -1;
+		int THUMB_PADDING = 2;
 		private Image<Bgr, byte> mainImage = null;
 		private Image<Bgr, byte> boxImage = null;
 		private Capture capture = null;
 		private bool appIsChangingTab = false;
 		#endregion
 
-		#region properties
 
-		enum tab
+		public HandshakeTool()
 		{
-			camera,
-			photoInfo
+			InitializeComponent();
 		}
 
-		private DirectoryInfo projectFolder
+		private void HandshakeTool_Load(object sender, EventArgs e)
 		{
-			get { return Global.ProjectFolder; }
+			cameraIndex.SelectedIndex = 1;
+			fillFilmstrip();
+			enableCamera();
 		}
-
-		private DirectoryInfo _imageFolder = null;
-		private DirectoryInfo imageFolder
-		{
-			get
-			{
-				if (_imageFolder == null)
-				{
-					_imageFolder = new DirectoryInfo(projectFolder.FullName + "\\images");
-				}
-				return _imageFolder;
-			}
-		}
-
-		private DirectoryInfo _annotationsFolder = null;
-		private DirectoryInfo annotationsFolder
-		{
-			get
-			{
-				if (_annotationsFolder == null)
-				{
-					_annotationsFolder = new DirectoryInfo(projectFolder.FullName + "\\annotations");
-				}
-				return _annotationsFolder;
-			}
-		}
-
-		#endregion
-
-
 
 		private void drawCross(Point cursor)
 		{
@@ -194,7 +163,7 @@ namespace HandshakeTool
 
 		private void viewport_MouseDown(object sender, MouseEventArgs e)
 		{
-			if (tabControl.SelectedIndex == (int)tab.photoInfo)
+			if (tabControl.SelectedTab == imgInfoTab)
 			{
 				showingBox = true;
 				drawingBox = true;
@@ -205,15 +174,16 @@ namespace HandshakeTool
 
 		private void viewport_MouseMove(object sender, MouseEventArgs e)
 		{
-			boxEnd = screenToImage(e.Location);
+			Point cursor = screenToImage(e.Location);
 
 			if (drawingBox)
 			{
+				boxEnd = cursor;
 				drawBoundingBox();
 			}
 			if (showingCross)
 			{
-				drawCross(boxEnd);
+				drawCross(cursor);
 			}
 		}
 
@@ -225,7 +195,7 @@ namespace HandshakeTool
 
 		private void viewport_MouseEnter(object sender, EventArgs e)
 		{
-			if (tabControl.SelectedIndex == (int)tab.photoInfo)
+			if (tabControl.SelectedTab == imgInfoTab)
 			{
 				showingCross = true;
 			}
@@ -233,7 +203,7 @@ namespace HandshakeTool
 
 		private void viewport_MouseLeave(object sender, EventArgs e)
 		{
-			if (tabControl.SelectedIndex == (int)tab.photoInfo)
+			if (tabControl.SelectedTab == imgInfoTab)
 			{
 				drawBoundingBox();
 			}
@@ -244,25 +214,7 @@ namespace HandshakeTool
 
 
 
-		public HandshakeTool()
-		{
-			InitializeComponent();
-			fillFilmstrip();
-
-			cameraIndex.SelectedIndex = 1;
-
-			if (Global.ProjectFolder != null)
-			{
-				//MessageBox.Show(projectFolder.FullName);
-				//MessageBox.Show(imageFolder.FullName);
-			}
-
-		}
-
-		private void HandshakeTool_Load(object sender, EventArgs e)
-		{
-			enableCamera();
-		}
+	
 
 		private void streaming(object sender, System.EventArgs e)
 		{
@@ -277,6 +229,20 @@ namespace HandshakeTool
 			Task.Run(() => takePhotos());
 		}
 
+		delegate void SetProgressBarCallback(int value);
+		private void setProgressBar(int value)
+		{
+			if (progressBar.InvokeRequired)
+			{
+				SetProgressBarCallback d = new SetProgressBarCallback(setProgressBar);
+				Invoke(d, new object[] { value });
+			}
+			else
+			{
+				progressBar.Value = value;
+			}
+		}
+
 
 		private void takePhotos()
 		{
@@ -285,11 +251,9 @@ namespace HandshakeTool
 			{
 				Thread.Sleep((int)(timePerShots.Value * 1000));
 				saveImg();
-				progressBar.Value = (int)(((double)(i + 1) / _numberOfShots) * 100);
-				//MessageBox.Show(progressBar.Value.ToString());
-				progressBar.PerformStep();
+				setProgressBar((int)(((double)(i + 1) / _numberOfShots) * 100));
 			}
-			progressBar.Value = 0;
+			setProgressBar(0);
 			MessageBox.Show("Photo capture is complete.");
 			progressBar.BackColor = Color.Black;
 		}
@@ -298,22 +262,68 @@ namespace HandshakeTool
 		{
 			DateTime now = DateTime.Now;
 			string date = now.ToString("s").Replace('T', '_').Replace(':', '-') + '-' + now.ToString("ffff");
-			string filepath = imageFolder + "\\" + date + ".jpg";
+			string filepath = Files.ImageFolder + date + ".jpg";
 			mainImage.Save(filepath);
+			appendFilmstrip(filepath);
 		}
 
 
 		private void showcaseImage(int index)
 		{
-			smallThumbPanels[currentIndex].BackColor = Color.Black;
+			index = clamp(index, 0, imgFilepaths.Count - 1);
+			if (currentIndex >= 0)
+			{
+				smallThumbPanels[currentIndex].BackColor = Color.Black;
+			}
 			disableCamera();
-			mainImage = new Image<Bgr, byte>(AllImageFileNames[index]);
+			mainImage = new Image<Bgr, byte>(imgFilepaths[index]);
+
 			boxImage = mainImage.Copy();
-			viewport.Image = mainImage.Bitmap;
+			
+			showingBox = readXmlBox(index);
+			if (showingBox)
+			{
+				drawBoundingBox();
+			}
+			else
+			{
+				viewport.Image = mainImage.Bitmap;
+			}
 
 			currentIndex = index;
 			smallThumbPanels[index].BackColor = Color.White;
 		}
+
+		private bool readXmlBox(int index)
+		{
+			string filepath = imgFilepaths[index]
+				.Remove(imgFilepaths[index].LastIndexOf('.') + 1)
+				+ "xml";
+
+			if (File.Exists(filepath))
+			{
+				string xmlContent = File.ReadAllText(filepath);
+
+				int xmin = getXmlBoxPoint(ref xmlContent, "<xmin>", "</xmin>");
+				int xmax = getXmlBoxPoint(ref xmlContent, "<xmax>", "</xmax>");
+				int ymin = getXmlBoxPoint(ref xmlContent, "<ymin>", "</ymin>");
+				int ymax = getXmlBoxPoint(ref xmlContent, "<ymax>", "</ymax>");
+
+				boxStart = new Point(xmin, ymin);
+				boxEnd = new Point(xmax, ymax);
+
+				return true;
+			}
+			return false;
+		}
+
+		private int getXmlBoxPoint(ref string xmlContent, string startTag, string endTag)
+		{
+			int index = xmlContent.IndexOf(startTag) + startTag.Length;
+			int length = xmlContent.IndexOf(endTag) - index;
+			return int.Parse(xmlContent.Substring(index, length));
+		}
+
 
 		private void enableCamera()
 		{
@@ -331,84 +341,83 @@ namespace HandshakeTool
 
 		public void fillFilmstrip()
 		{
-			//DialogResult result = this.folderBrowserDlg.ShowDialog();
-			//if (result == DialogResult.OK)
-			//{
+			filmstrip.Controls.Clear();
+			var imageFiles = Files.ImageFolder.GetFiles("*.jpg")
+					.Concat(Files.ImageFolder.GetFiles("*.gif"))
+					.Concat(Files.ImageFolder.GetFiles("*.png"))
+					.Concat(Files.ImageFolder.GetFiles("*.jpeg"))
+					.Concat(Files.ImageFolder.GetFiles("*.bmp")).ToArray();
 
-				var imageFiles = imageFolder.GetFiles("*.jpg")
-					  .Concat(imageFolder.GetFiles("*.gif"))
-					  .Concat(imageFolder.GetFiles("*.png"))
-					  .Concat(imageFolder.GetFiles("*.jpeg"))
-					  .Concat(imageFolder.GetFiles("*.bmp")).ToArray(); // Here we filter all image files 
-				filmstrip.Controls.Clear();
-				if (imageFiles.Length > 0)
-				{
-					TotalImageFiles = imageFiles.Length;
-				}
-				else
-				{
-					return;
-				}
-				
-
-				thumbImages = new PictureBox[TotalImageFiles];
-				bigThumbPanels = new Panel[TotalImageFiles];
-				smallThumbPanels = new Panel[TotalImageFiles];
-				AllImageFileNames = new string[TotalImageFiles];
-				int imageindexs = 0;
+			if (imageFiles.Length > 0)
+			{
+				currentIndex = 0;
 				foreach (FileInfo img in imageFiles)
 				{
-					AllImageFileNames[imageindexs] = img.FullName;
-					appendFilmstrip(img.Name, img.FullName, imageindexs);
-					
-					imageindexs = imageindexs + 1;
-
+					appendFilmstrip(img.FullName);
 				}
-				currentIndex = 0;
-			//}
+			}
 		}
 
-		private void appendFilmstrip(string imageName, string ImageFullName, int imageIndex)
+		private void appendFilmstrip(string filepath)
 		{
-			bigThumbPanels[imageIndex] = new Panel();
-			bigThumbPanels[imageIndex].Name = "thumbPanel" + imageIndex;
-			bigThumbPanels[imageIndex].BackColor = Color.Black;
-			bigThumbPanels[imageIndex].Location = new Point(nextThumbX, nextThumbY);
-			bigThumbPanels[imageIndex].Size = new Size(THUMB_WIDTH, THUMB_HEIGHT);
-			bigThumbPanels[imageIndex].BorderStyle = BorderStyle.None;
+			int index = imgFilepaths.Count;
+			imgFilepaths.Add(filepath);
+			Panel bigThumbPanel = new Panel();
+			bigThumbPanels.Add(bigThumbPanel);
+			Panel smallThumbPanel = new Panel();
+			smallThumbPanels.Add(smallThumbPanel);
+			PictureBox thumbImage = new PictureBox();
+			thumbImages.Add(thumbImage);
 
-			smallThumbPanels[imageIndex] = new Panel();
-			smallThumbPanels[imageIndex].BackColor = Color.Black;
-			smallThumbPanels[imageIndex].Dock = DockStyle.Fill;
-			smallThumbPanels[imageIndex].Padding = new Padding(SELECTED_PADDING);
+			bigThumbPanel.Name = "thumbPanel" + index;
+			bigThumbPanel.BackColor = Color.Black;
+			bigThumbPanel.Location = new Point(nextThumbX + filmstrip.AutoScrollPosition.X, nextThumbY);
+			bigThumbPanel.Size = new Size(THUMB_WIDTH, THUMB_HEIGHT);
+			bigThumbPanel.BorderStyle = BorderStyle.None;
 
-			thumbImages[imageIndex] = new PictureBox();
-			thumbImages[imageIndex].MouseClick += thumb_Click;
-			thumbImages[imageIndex].Name = "thumbImage" + imageIndex;
-			thumbImages[imageIndex].Image = Image.FromFile(ImageFullName);
-			thumbImages[imageIndex].BackColor = Color.Black;
-			thumbImages[imageIndex].Location = new Point(0, 0);
-			thumbImages[imageIndex].BorderStyle = BorderStyle.None;
-			thumbImages[imageIndex].SizeMode = PictureBoxSizeMode.Zoom;
-			thumbImages[imageIndex].Dock = DockStyle.Fill;
+			smallThumbPanel.BackColor = Color.Black;
+			smallThumbPanel.Dock = DockStyle.Fill;
+			smallThumbPanel.Padding = new Padding(THUMB_PADDING);
 
-			filmstrip.Controls.Add(bigThumbPanels[imageIndex]);
-			bigThumbPanels[imageIndex].Controls.Add(smallThumbPanels[imageIndex]);
-			smallThumbPanels[imageIndex].Controls.Add(thumbImages[imageIndex]);
+			thumbImage.MouseClick += thumb_Click;
+			thumbImage.Name = "thumbImage" + index;
+			thumbImage.Image = Image.FromFile(filepath);
+			thumbImage.BackColor = Color.Black;
+			thumbImage.Location = new Point(0, 0);
+			thumbImage.BorderStyle = BorderStyle.None;
+			thumbImage.SizeMode = PictureBoxSizeMode.Zoom;
+			thumbImage.Dock = DockStyle.Fill;
+
+			AppendFilmstrip2(bigThumbPanel, smallThumbPanel, thumbImage);
 
 			nextThumbX += THUMB_WIDTH + THUMB_SPACING;
 		}
 
+		delegate void AppendFilmstripCallback(Panel bigPanel, Panel smallPanel, PictureBox picture);
+
+		private void AppendFilmstrip2(Panel bigPanel, Panel smallPanel, PictureBox picture)
+		{
+			if (filmstrip.InvokeRequired)
+			{
+				AppendFilmstripCallback callback = new AppendFilmstripCallback(AppendFilmstrip2);
+				Invoke(callback, new object[] { bigPanel, smallPanel, picture });
+			}
+			else
+			{
+				filmstrip.Controls.Add(bigPanel);
+				bigPanel.Controls.Add(smallPanel);
+				smallPanel.Controls.Add(picture);
+			}
+		}
+
 		private void thumb_Click(object sender, EventArgs e)
 		{
-			
-
 			PictureBox picture = (PictureBox)sender;
 			int index = int.Parse(picture.Name.Remove(0, "thumbPanel".Length));
 			showcaseImage(index);
 
 			appIsChangingTab = true;
-			tabControl.SelectedIndex = (int)tab.photoInfo;
+			tabControl.SelectedTab = imgInfoTab;
 			appIsChangingTab = false;
 		}
 
@@ -448,7 +457,7 @@ namespace HandshakeTool
 		private void tabChanged(object sender, EventArgs e)
 		{
 			
-			if (tabControl.SelectedIndex == (int)tab.camera)
+			if (tabControl.SelectedTab == cameraTab)
 			{
 				if (!appIsChangingTab)
 				{
@@ -460,19 +469,83 @@ namespace HandshakeTool
 				viewport.MouseUp -= viewport_MouseUp;
 				viewport.MouseMove -= viewport_MouseMove;
 			}
-			else if (tabControl.SelectedIndex == (int)tab.photoInfo)
+			else if (tabControl.SelectedTab == imgInfoTab)
 			{
-				if (!appIsChangingTab)
+				if (imgFilepaths.Count <= 0)
 				{
-					showcaseImage(currentIndex);
+					MessageBox.Show("Please add an image first.");
+					tabControl.SelectedTab = cameraTab;
 				}
-				viewport.Cursor = Cursors.Cross;
-				viewport.MouseDown += viewport_MouseDown;
-				viewport.MouseUp += viewport_MouseUp;
-				viewport.MouseMove += viewport_MouseMove;
+				else
+				{
+					if (!appIsChangingTab)
+					{
+						showcaseImage(currentIndex);
+					}
+					viewport.Cursor = Cursors.Cross;
+					viewport.MouseDown += viewport_MouseDown;
+					viewport.MouseUp += viewport_MouseUp;
+					viewport.MouseMove += viewport_MouseMove;
+				}
 			}
 		}
 
-		
+		private void btnSaveXml_Click(object sender, EventArgs e)
+		{
+			writeXmlFile();
+			showcaseImage(currentIndex + 1);
+		}
+
+		private bool writeXmlFile()
+		{
+			if (string.IsNullOrWhiteSpace(label.Text) | !showingBox)
+			{
+				MessageBox.Show("A label and bounding box must be specified.");
+				return false;
+			}
+			else
+			{
+				string filepath = imgFilepaths[currentIndex]
+					.Remove(imgFilepaths[currentIndex].LastIndexOf('.'));
+				Size imgSize = viewport.Image.Size;
+				char[] separator = { '\\' };
+				string[] pathStructure = filepath.Split(separator);
+				string folder = pathStructure[pathStructure.Length - 2];
+				string filename = pathStructure[pathStructure.Length - 1];
+
+				string xmlContent = "<annotation>"
+					+ "\r\n\t<folder>" + folder + "</folder>"
+					+ "\r\n\t<filename>" + filename + ".jpg</filename>"
+					+ "\r\n\t<path>" + filepath + ".jpg</path>"
+					+ "\r\n\t<source><database>Unknown</database></source>"
+					+ "\r\n\t<size>"
+					+ "\r\n\t\t<width>" + imgSize.Width + "</width>"
+					+ "\r\n\t\t<height>" + imgSize.Height + "</height>"
+					+ "\r\n\t\t<height>3</height>"
+					+ "\r\n\t</size>"
+					+ "\r\n\t<segmented>0</segmented>"
+					+ "\r\n\t<object>"
+					+ "\r\n\t\t<name>" + label.Text + "</name>"
+					+ "\r\n\t\t<pose>Unspecified</pose>"
+					+ "\r\n\t\t<truncated>0</truncated>"
+					+ "\r\n\t\t<difficult>0</difficult>"
+					+ "\r\n\t\t<bndbox>"
+					+ "\r\n\t\t\t<xmin>" + boxStart.X + "</xmin>"
+					+ "\r\n\t\t\t<ymin>" + boxStart.Y + "</ymin>"
+					+ "\r\n\t\t\t<xmax>" + boxEnd.X + "</xmax>"
+					+ "\r\n\t\t\t<ymax>" + boxEnd.Y + "</ymax>"
+					+ "\r\n\t\t</bndbox>"
+					+ "\r\n\t</object>"
+					+ "\r\n</annotation>";
+
+				File.WriteAllText(filepath + ".xml", xmlContent);
+				return true;
+			}
+		}
+
+		private void HandshakeTool_Enter(object sender, EventArgs e)
+		{
+			MessageBox.Show("focused");
+		}
 	}
 }

@@ -15,20 +15,21 @@ namespace HandshakeTool
 		[STAThread]
 		static void Main(string[] args)
 		{
+			Application.EnableVisualStyles();
+			Application.SetCompatibleTextRenderingDefault(false);
+
 			if ((args != null) && (args.Length > 0))
 			{
 				string filename = args[0]
 					.Remove(args[0].LastIndexOf('.'))
 					.Remove(0, args[0].LastIndexOf('\\'));
-				Global.ProjectFolder = new DirectoryInfo(args[0].Remove(args[0].LastIndexOf('\\')) + filename + '\\');
+				Files.ProjectFolder = new DirectoryInfo(args[0].Remove(args[0].LastIndexOf('\\')) + filename + '\\');
+				Application.Run(new HandshakeTool());
 			}
 			else
 			{
-				Global.ProjectFolder = new DirectoryInfo(@"C:\Projects\Sem6\CAP\HandshakeTool\HandshakeTool\my_project\my_project");
+				Application.Run(new Welcome());
 			}
-			Application.EnableVisualStyles();
-			Application.SetCompatibleTextRenderingDefault(false);
-			Application.Run(new HandshakeTool());
 		}
 	}
 }

@@ -44,24 +44,25 @@ namespace HandshakeTool
 			this.browseLabelMapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.filmstrip = new System.Windows.Forms.Panel();
 			this.tabControl = new System.Windows.Forms.TabControl();
-			this.Webcam = new System.Windows.Forms.TabPage();
+			this.cameraTab = new System.Windows.Forms.TabPage();
 			this.shootBtn = new System.Windows.Forms.Button();
 			this.timePerShots = new System.Windows.Forms.NumericUpDown();
 			this.numberOfShots = new System.Windows.Forms.NumericUpDown();
 			this.cameraIndex = new System.Windows.Forms.ComboBox();
 			this.dsafae = new System.Windows.Forms.Label();
 			this.label1 = new System.Windows.Forms.Label();
-			this.tabPage2 = new System.Windows.Forms.TabPage();
-			this.textBox1 = new System.Windows.Forms.TextBox();
+			this.imgInfoTab = new System.Windows.Forms.TabPage();
+			this.btnSaveXml = new System.Windows.Forms.Button();
+			this.label = new System.Windows.Forms.TextBox();
 			this.label2 = new System.Windows.Forms.Label();
 			this.viewport = new System.Windows.Forms.PictureBox();
 			this.progressBar = new System.Windows.Forms.ProgressBar();
 			this.menuStrip1.SuspendLayout();
 			this.tabControl.SuspendLayout();
-			this.Webcam.SuspendLayout();
+			this.cameraTab.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.timePerShots)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.numberOfShots)).BeginInit();
-			this.tabPage2.SuspendLayout();
+			this.imgInfoTab.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.viewport)).BeginInit();
 			this.SuspendLayout();
 			// 
@@ -74,7 +75,7 @@ namespace HandshakeTool
             this.machineLearningToolStripMenuItem});
 			this.menuStrip1.Location = new System.Drawing.Point(0, 0);
 			this.menuStrip1.Name = "menuStrip1";
-			this.menuStrip1.Size = new System.Drawing.Size(1359, 28);
+			this.menuStrip1.Size = new System.Drawing.Size(1359, 30);
 			this.menuStrip1.TabIndex = 3;
 			this.menuStrip1.Text = "menuStrip1";
 			// 
@@ -168,32 +169,32 @@ namespace HandshakeTool
 			// 
 			// tabControl
 			// 
-			this.tabControl.Controls.Add(this.Webcam);
-			this.tabControl.Controls.Add(this.tabPage2);
+			this.tabControl.Controls.Add(this.cameraTab);
+			this.tabControl.Controls.Add(this.imgInfoTab);
 			this.tabControl.Dock = System.Windows.Forms.DockStyle.Left;
-			this.tabControl.Location = new System.Drawing.Point(0, 28);
+			this.tabControl.Location = new System.Drawing.Point(0, 30);
 			this.tabControl.Multiline = true;
 			this.tabControl.Name = "tabControl";
 			this.tabControl.SelectedIndex = 0;
-			this.tabControl.Size = new System.Drawing.Size(250, 739);
+			this.tabControl.Size = new System.Drawing.Size(250, 737);
 			this.tabControl.TabIndex = 5;
 			this.tabControl.SelectedIndexChanged += new System.EventHandler(this.tabChanged);
 			// 
-			// Webcam
+			// cameraTab
 			// 
-			this.Webcam.Controls.Add(this.shootBtn);
-			this.Webcam.Controls.Add(this.timePerShots);
-			this.Webcam.Controls.Add(this.numberOfShots);
-			this.Webcam.Controls.Add(this.cameraIndex);
-			this.Webcam.Controls.Add(this.dsafae);
-			this.Webcam.Controls.Add(this.label1);
-			this.Webcam.Location = new System.Drawing.Point(4, 25);
-			this.Webcam.Name = "Webcam";
-			this.Webcam.Padding = new System.Windows.Forms.Padding(3);
-			this.Webcam.Size = new System.Drawing.Size(242, 710);
-			this.Webcam.TabIndex = 0;
-			this.Webcam.Text = "Webcam";
-			this.Webcam.UseVisualStyleBackColor = true;
+			this.cameraTab.Controls.Add(this.shootBtn);
+			this.cameraTab.Controls.Add(this.timePerShots);
+			this.cameraTab.Controls.Add(this.numberOfShots);
+			this.cameraTab.Controls.Add(this.cameraIndex);
+			this.cameraTab.Controls.Add(this.dsafae);
+			this.cameraTab.Controls.Add(this.label1);
+			this.cameraTab.Location = new System.Drawing.Point(4, 25);
+			this.cameraTab.Name = "cameraTab";
+			this.cameraTab.Padding = new System.Windows.Forms.Padding(3);
+			this.cameraTab.Size = new System.Drawing.Size(242, 708);
+			this.cameraTab.TabIndex = 0;
+			this.cameraTab.Text = "Webcam";
+			this.cameraTab.UseVisualStyleBackColor = true;
 			// 
 			// shootBtn
 			// 
@@ -289,41 +290,52 @@ namespace HandshakeTool
 			this.label1.TabIndex = 0;
 			this.label1.Text = "Number of photos";
 			// 
-			// tabPage2
+			// imgInfoTab
 			// 
-			this.tabPage2.Controls.Add(this.textBox1);
-			this.tabPage2.Controls.Add(this.label2);
-			this.tabPage2.Location = new System.Drawing.Point(4, 25);
-			this.tabPage2.Name = "tabPage2";
-			this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPage2.Size = new System.Drawing.Size(242, 710);
-			this.tabPage2.TabIndex = 1;
-			this.tabPage2.Text = "Image Info";
-			this.tabPage2.UseVisualStyleBackColor = true;
+			this.imgInfoTab.Controls.Add(this.btnSaveXml);
+			this.imgInfoTab.Controls.Add(this.label);
+			this.imgInfoTab.Controls.Add(this.label2);
+			this.imgInfoTab.Location = new System.Drawing.Point(4, 25);
+			this.imgInfoTab.Name = "imgInfoTab";
+			this.imgInfoTab.Padding = new System.Windows.Forms.Padding(3);
+			this.imgInfoTab.Size = new System.Drawing.Size(242, 710);
+			this.imgInfoTab.TabIndex = 1;
+			this.imgInfoTab.Text = "Image Info";
+			this.imgInfoTab.UseVisualStyleBackColor = true;
 			// 
-			// textBox1
+			// btnSaveXml
 			// 
-			this.textBox1.Location = new System.Drawing.Point(33, 60);
-			this.textBox1.Name = "textBox1";
-			this.textBox1.Size = new System.Drawing.Size(171, 22);
-			this.textBox1.TabIndex = 1;
+			this.btnSaveXml.Location = new System.Drawing.Point(33, 122);
+			this.btnSaveXml.Name = "btnSaveXml";
+			this.btnSaveXml.Size = new System.Drawing.Size(94, 28);
+			this.btnSaveXml.TabIndex = 2;
+			this.btnSaveXml.Text = "Next Image";
+			this.btnSaveXml.UseVisualStyleBackColor = true;
+			this.btnSaveXml.Click += new System.EventHandler(this.btnSaveXml_Click);
+			// 
+			// label
+			// 
+			this.label.Location = new System.Drawing.Point(33, 60);
+			this.label.Name = "label";
+			this.label.Size = new System.Drawing.Size(171, 22);
+			this.label.TabIndex = 1;
 			// 
 			// label2
 			// 
 			this.label2.AutoSize = true;
 			this.label2.Location = new System.Drawing.Point(30, 26);
 			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(117, 17);
+			this.label2.Size = new System.Drawing.Size(110, 17);
 			this.label2.TabIndex = 0;
-			this.label2.Text = "Detected Objects";
+			this.label2.Text = "Detected Object";
 			// 
 			// viewport
 			// 
 			this.viewport.BackColor = System.Drawing.Color.Black;
 			this.viewport.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.viewport.Location = new System.Drawing.Point(250, 28);
+			this.viewport.Location = new System.Drawing.Point(250, 30);
 			this.viewport.Name = "viewport";
-			this.viewport.Size = new System.Drawing.Size(1109, 739);
+			this.viewport.Size = new System.Drawing.Size(1109, 737);
 			this.viewport.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
 			this.viewport.TabIndex = 6;
 			this.viewport.TabStop = false;
@@ -357,15 +369,16 @@ namespace HandshakeTool
 			this.Name = "HandshakeTool";
 			this.Text = "Handshake Tool";
 			this.Load += new System.EventHandler(this.HandshakeTool_Load);
+			this.Enter += new System.EventHandler(this.HandshakeTool_Enter);
 			this.menuStrip1.ResumeLayout(false);
 			this.menuStrip1.PerformLayout();
 			this.tabControl.ResumeLayout(false);
-			this.Webcam.ResumeLayout(false);
-			this.Webcam.PerformLayout();
+			this.cameraTab.ResumeLayout(false);
+			this.cameraTab.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.timePerShots)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.numberOfShots)).EndInit();
-			this.tabPage2.ResumeLayout(false);
-			this.tabPage2.PerformLayout();
+			this.imgInfoTab.ResumeLayout(false);
+			this.imgInfoTab.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.viewport)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
@@ -389,18 +402,19 @@ namespace HandshakeTool
 		private System.Windows.Forms.ToolStripMenuItem openProjectToolStripMenuItem;
 		private System.Windows.Forms.Panel filmstrip;
 		private System.Windows.Forms.TabControl tabControl;
-		private System.Windows.Forms.TabPage Webcam;
-		private System.Windows.Forms.TabPage tabPage2;
+		private System.Windows.Forms.TabPage cameraTab;
+		private System.Windows.Forms.TabPage imgInfoTab;
 		private System.Windows.Forms.PictureBox viewport;
 		private System.Windows.Forms.Label dsafae;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.NumericUpDown timePerShots;
 		private System.Windows.Forms.NumericUpDown numberOfShots;
 		private System.Windows.Forms.ComboBox cameraIndex;
-		private System.Windows.Forms.TextBox textBox1;
+		private System.Windows.Forms.TextBox label;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.Button shootBtn;
 		private System.Windows.Forms.ProgressBar progressBar;
+		private System.Windows.Forms.Button btnSaveXml;
 	}
 }
 

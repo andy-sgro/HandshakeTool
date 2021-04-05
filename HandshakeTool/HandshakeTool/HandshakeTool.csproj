@@ -75,7 +75,7 @@
     </Compile>
     <Compile Include="DB.cs" />
     <Compile Include="DbTester.cs" />
-    <Compile Include="Global.cs" />
+    <Compile Include="Files.cs" />
     <Compile Include="Labeller.cs">
       <SubType>UserControl</SubType>
     </Compile>
