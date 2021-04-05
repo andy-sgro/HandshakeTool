@@ -67,43 +67,38 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Camera.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Camera.Designer.cs">
-      <DependentUpon>Camera.cs</DependentUpon>
-    </Compile>
-    <Compile Include="DB.cs" />
-    <Compile Include="DbTester.cs" />
     <Compile Include="Files.cs" />
-    <Compile Include="Labeller.cs">
+    <Compile Include="MainPage.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Labeller.Designer.cs">
-      <DependentUpon>Labeller.cs</DependentUpon>
+    <Compile Include="MainPage.Designer.cs">
+      <DependentUpon>MainPage.cs</DependentUpon>
     </Compile>
-    <Compile Include="HandshakeTool.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="HandshakeTool.Designer.cs">
-      <DependentUpon>HandshakeTool.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Program.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Welcome.cs">
-      <SubType>Form</SubType>
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Welcome.Designer.cs">
       <DependentUpon>Welcome.cs</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="Camera.resx">
-      <DependentUpon>Camera.cs</DependentUpon>
+    <Compile Include="_HandshakeTool.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="_HandshakeTool.Designer.cs">
+      <DependentUpon>_HandshakeTool.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="_Welcome.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="_Welcome.Designer.cs">
+      <DependentUpon>_Welcome.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="MainPage.resx">
+      <DependentUpon>MainPage.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Labeller.resx">
-      <DependentUpon>Labeller.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="HandshakeTool.resx">
-      <DependentUpon>HandshakeTool.cs</DependentUpon>
+    <EmbeddedResource Include="_HandshakeTool.resx">
+      <DependentUpon>_HandshakeTool.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -114,8 +109,8 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="Welcome.resx">
-      <DependentUpon>Welcome.cs</DependentUpon>
+    <EmbeddedResource Include="_Welcome.resx">
+      <DependentUpon>_Welcome.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="OpenTK.dll.config" />
     <None Include="packages.config" />
