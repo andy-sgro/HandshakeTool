@@ -68,17 +68,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Files.cs" />
+    <Compile Include="HandshakeTool.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="HandshakeTool.Designer.cs">
+      <DependentUpon>HandshakeTool.cs</DependentUpon>
+    </Compile>
     <Compile Include="MainPage.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="MainPage.Designer.cs">
       <DependentUpon>MainPage.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Welcome.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Welcome.Designer.cs">
-      <DependentUpon>Welcome.cs</DependentUpon>
     </Compile>
     <Compile Include="_HandshakeTool.cs">
       <SubType>Form</SubType>
@@ -94,6 +94,9 @@
     <Compile Include="_Welcome.Designer.cs">
       <DependentUpon>_Welcome.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="HandshakeTool.resx">
+      <DependentUpon>HandshakeTool.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MainPage.resx">
       <DependentUpon>MainPage.cs</DependentUpon>
     </EmbeddedResource>

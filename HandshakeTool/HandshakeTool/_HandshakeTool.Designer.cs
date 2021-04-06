@@ -29,6 +29,7 @@ namespace HandshakeTool
 		/// </summary>
 		private void InitializeComponent()
 		{
+			this.components = new System.ComponentModel.Container();
 			this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
 			this.menuStrip1 = new System.Windows.Forms.MenuStrip();
 			this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -57,6 +58,7 @@ namespace HandshakeTool
 			this.label2 = new System.Windows.Forms.Label();
 			this.viewport = new System.Windows.Forms.PictureBox();
 			this.progressBar = new System.Windows.Forms.ProgressBar();
+			this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.menuStrip1.SuspendLayout();
 			this.tabControl.SuspendLayout();
 			this.cameraTab.SuspendLayout();
@@ -75,7 +77,7 @@ namespace HandshakeTool
             this.machineLearningToolStripMenuItem});
 			this.menuStrip1.Location = new System.Drawing.Point(0, 0);
 			this.menuStrip1.Name = "menuStrip1";
-			this.menuStrip1.Size = new System.Drawing.Size(1359, 30);
+			this.menuStrip1.Size = new System.Drawing.Size(1359, 28);
 			this.menuStrip1.TabIndex = 3;
 			this.menuStrip1.Text = "menuStrip1";
 			// 
@@ -172,11 +174,11 @@ namespace HandshakeTool
 			this.tabControl.Controls.Add(this.cameraTab);
 			this.tabControl.Controls.Add(this.imgInfoTab);
 			this.tabControl.Dock = System.Windows.Forms.DockStyle.Left;
-			this.tabControl.Location = new System.Drawing.Point(0, 30);
+			this.tabControl.Location = new System.Drawing.Point(0, 28);
 			this.tabControl.Multiline = true;
 			this.tabControl.Name = "tabControl";
 			this.tabControl.SelectedIndex = 0;
-			this.tabControl.Size = new System.Drawing.Size(250, 737);
+			this.tabControl.Size = new System.Drawing.Size(250, 739);
 			this.tabControl.TabIndex = 5;
 			this.tabControl.SelectedIndexChanged += new System.EventHandler(this.tabChanged);
 			// 
@@ -191,7 +193,7 @@ namespace HandshakeTool
 			this.cameraTab.Location = new System.Drawing.Point(4, 25);
 			this.cameraTab.Name = "cameraTab";
 			this.cameraTab.Padding = new System.Windows.Forms.Padding(3);
-			this.cameraTab.Size = new System.Drawing.Size(242, 708);
+			this.cameraTab.Size = new System.Drawing.Size(242, 710);
 			this.cameraTab.TabIndex = 0;
 			this.cameraTab.Text = "Webcam";
 			this.cameraTab.UseVisualStyleBackColor = true;
@@ -332,10 +334,9 @@ namespace HandshakeTool
 			// viewport
 			// 
 			this.viewport.BackColor = System.Drawing.Color.Black;
-			this.viewport.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.viewport.Location = new System.Drawing.Point(250, 30);
+			this.viewport.Location = new System.Drawing.Point(557, 213);
 			this.viewport.Name = "viewport";
-			this.viewport.Size = new System.Drawing.Size(1109, 737);
+			this.viewport.Size = new System.Drawing.Size(802, 554);
 			this.viewport.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
 			this.viewport.TabIndex = 6;
 			this.viewport.TabStop = false;
@@ -353,7 +354,13 @@ namespace HandshakeTool
 			this.progressBar.Step = 1;
 			this.progressBar.TabIndex = 7;
 			// 
-			// HandshakeTool
+			// contextMenuStrip1
+			// 
+			this.contextMenuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
+			this.contextMenuStrip1.Name = "contextMenuStrip1";
+			this.contextMenuStrip1.Size = new System.Drawing.Size(61, 4);
+			// 
+			// _HandshakeTool
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -366,7 +373,7 @@ namespace HandshakeTool
 			this.Controls.Add(this.filmstrip);
 			this.KeyPreview = true;
 			this.MainMenuStrip = this.menuStrip1;
-			this.Name = "HandshakeTool";
+			this.Name = "_HandshakeTool";
 			this.Text = "Handshake Tool";
 			this.Load += new System.EventHandler(this.HandshakeTool_Load);
 			this.Enter += new System.EventHandler(this.HandshakeTool_Enter);
@@ -415,6 +422,7 @@ namespace HandshakeTool
 		private System.Windows.Forms.Button shootBtn;
 		private System.Windows.Forms.ProgressBar progressBar;
 		private System.Windows.Forms.Button btnSaveXml;
+		private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
 	}
 }
 

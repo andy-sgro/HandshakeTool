@@ -18,18 +18,19 @@ namespace HandshakeTool
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
 
+			HandshakeTool app = new HandshakeTool();
+			
+
 			if ((args != null) && (args.Length > 0))
 			{
 				string filename = args[0]
 					.Remove(args[0].LastIndexOf('.'))
 					.Remove(0, args[0].LastIndexOf('\\'));
 				Files.ProjectFolder = new DirectoryInfo(args[0].Remove(args[0].LastIndexOf('\\')) + filename + '\\');
-				Application.Run(new _HandshakeTool());
+				app.LoadMainPage();				
 			}
-			else
-			{
-				Application.Run(new _Welcome());
-			}
+
+			Application.Run(app);
 		}
 	}
 }

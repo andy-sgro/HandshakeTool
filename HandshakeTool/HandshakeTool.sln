@@ -5,8 +5,6 @@ VisualStudioVersion = 16.0.30711.63
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HandshakeTool", "HandshakeTool\HandshakeTool.csproj", "{6E181507-B488-4B51-9E05-F0D027BA729D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageScroller", "ImageScroller\ImageScroller.csproj", "{B680FBF2-37C8-4ED4-BD81-21A212AEFFAA}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -17,10 +15,6 @@ Global
 		{6E181507-B488-4B51-9E05-F0D027BA729D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6E181507-B488-4B51-9E05-F0D027BA729D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6E181507-B488-4B51-9E05-F0D027BA729D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B680FBF2-37C8-4ED4-BD81-21A212AEFFAA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B680FBF2-37C8-4ED4-BD81-21A212AEFFAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B680FBF2-37C8-4ED4-BD81-21A212AEFFAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B680FBF2-37C8-4ED4-BD81-21A212AEFFAA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

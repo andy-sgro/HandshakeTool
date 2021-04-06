@@ -4,11 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using System.Windows.Forms;
 
 namespace HandshakeTool
 {
 	public static class Files
 	{
+		public static DirectoryInfo ImageFolder { get; private set; } = null;
+		public static DirectoryInfo AnnotationsFolder { get; private set; } = null;
+
 		private static DirectoryInfo projectFolder;
 		public static DirectoryInfo ProjectFolder
 		{
@@ -19,6 +23,17 @@ namespace HandshakeTool
 				if ((lastChar != '\\') & (lastChar != '/'))
 				{
 					projectFolder = new DirectoryInfo(value.FullName + '\\');
+					ImageFolder = new DirectoryInfo(ProjectFolder.FullName + "images\\");
+					AnnotationsFolder = new DirectoryInfo(ProjectFolder.FullName + "annotations\\");
+
+					if (!ImageFolder.Exists)
+					{
+						ImageFolder.Create();
+					}
+					if (!AnnotationsFolder.Exists)
+					{
+						AnnotationsFolder.Create();
+					}
 				}
 				else
 				{
@@ -26,31 +41,48 @@ namespace HandshakeTool
 				}
 			}
 		}
+		
 
-		private static DirectoryInfo imageFolder = null;
-		public static DirectoryInfo ImageFolder
+		public static bool NewProject()
 		{
-			get
+			SaveFileDialog dialog = new SaveFileDialog();
+			dialog.Filter = "Handshake Tool files (*.hst)|*.hst";
+
+			if (dialog.ShowDialog() == DialogResult.OK)
 			{
-				if (imageFolder == null)
+				// assign project folder
+				File.Create(dialog.FileName);
+				ProjectFolder = new DirectoryInfo(
+					dialog.FileName.Remove(dialog.FileName.LastIndexOf('.')));
+
+				// ensure project & images folders exist
+				if (!ProjectFolder.Exists)
 				{
-					imageFolder = new DirectoryInfo(ProjectFolder.FullName + "images\\");
+					ProjectFolder.Create();
 				}
-				return imageFolder;
+				if (!ImageFolder.Exists)
+				{
+					ImageFolder.Create();
+				}
+				return true;
 			}
+			return false;
 		}
 
-		private static DirectoryInfo annotationsFolder = null;
-		public static DirectoryInfo AnnotationsFolder
+
+		public static bool OpenProject()
 		{
-			get
+			OpenFileDialog dialog = new OpenFileDialog();
+			dialog.Filter = "Handshake Tool files (*.hst)|*.hst";
+
+			if (dialog.ShowDialog() == DialogResult.OK)
 			{
-				if (annotationsFolder == null)
-				{
-					annotationsFolder = new DirectoryInfo(ProjectFolder.FullName + "annotations\\");
-				}
-				return annotationsFolder;
+				ProjectFolder = new DirectoryInfo(
+					dialog.FileName.Remove(dialog.FileName.LastIndexOf('.')));
+
+				return true;
 			}
+			return false;
 		}
 	}
 }

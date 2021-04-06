@@ -18,11 +18,9 @@ namespace HandshakeTool
 	public partial class MainPage : UserControl
 	{
 		#region fields
-		private FolderBrowserDialog folderBrowserDlg = new FolderBrowserDialog();
-
-		const int FIRST_THUMB_X = 40;
 		const int FIRST_THUMB_Y = 10;
 		const int THUMB_SPACING = 10;
+		const int FIRST_THUMB_X = THUMB_SPACING;
 		const int THUMB_WIDTH = 100;
 		const int THUMB_HEIGHT = 70;
 
@@ -44,21 +42,18 @@ namespace HandshakeTool
 		private Image<Bgr, byte> mainImage = null;
 		private Image<Bgr, byte> boxImage = null;
 		private Capture capture = null;
-		private bool appIsChangingTab = false;
+		private bool userIsChangingTab = true;
 		#endregion
 
 
 		public MainPage()
 		{
 			InitializeComponent();
-		}
-
-		private void HandshakeTool_Load(object sender, EventArgs e)
-		{
 			cameraIndex.SelectedIndex = 1;
 			fillFilmstrip();
 			enableCamera();
 		}
+
 
 		private void drawCross(Point cursor)
 		{
@@ -78,6 +73,7 @@ namespace HandshakeTool
 
 			viewport.Image = image.Bitmap;
 		}
+
 
 		private void drawBoundingBox()
 		{
@@ -100,6 +96,7 @@ namespace HandshakeTool
 				viewport.Image = boxImage.Bitmap;
 			}
 		}
+
 
 		private Point screenToImage(Point pt)
 		{
@@ -144,7 +141,6 @@ namespace HandshakeTool
 		}
 
 
-
 		private int clamp(float input, int min, int max)
 		{
 			if (input < min)
@@ -157,8 +153,6 @@ namespace HandshakeTool
 			}
 			return (int)Math.Round(input);
 		}
-
-
 
 
 		private void viewport_MouseDown(object sender, MouseEventArgs e)
@@ -210,12 +204,6 @@ namespace HandshakeTool
 		}
 
 
-
-
-
-
-
-
 		private void streaming(object sender, System.EventArgs e)
 		{
 			mainImage = capture.QueryFrame().ToImage<Bgr, byte>();
@@ -228,6 +216,7 @@ namespace HandshakeTool
 		{
 			Task.Run(() => takePhotos());
 		}
+
 
 		delegate void SetProgressBarCallback(int value);
 		private void setProgressBar(int value)
@@ -249,7 +238,7 @@ namespace HandshakeTool
 			int _numberOfShots = (int)numberOfShots.Value;
 			for (int i = 0; i < _numberOfShots; ++i)
 			{
-				Thread.Sleep((int)(timePerShots.Value * 1000));
+				Thread.Sleep((int)(timePerShot.Value * 1000));
 				saveImg();
 				setProgressBar((int)(((double)(i + 1) / _numberOfShots) * 100));
 			}
@@ -257,6 +246,7 @@ namespace HandshakeTool
 			MessageBox.Show("Photo capture is complete.");
 			progressBar.BackColor = Color.Black;
 		}
+
 
 		private void saveImg()
 		{
@@ -292,6 +282,24 @@ namespace HandshakeTool
 
 			currentIndex = index;
 			smallThumbPanels[index].BackColor = Color.White;
+
+			// autoscroll to thumbnail
+			int picX = bigThumbPanels[index].Location.X;
+			int picWidth = bigThumbPanels[index].Width;
+			int scrollX = filmstrip.AutoScrollPosition.X;
+			int filmWidth = filmstrip.Width;
+			// if thumbnail is to the left
+			if ((picX + picWidth) > (scrollX + filmWidth))
+			{
+				filmstrip.AutoScrollPosition = new Point(
+					picX - filmWidth + picWidth, filmstrip.AutoScrollPosition.Y);
+			}
+			// if thumbnail is to the right
+			if ((picX + picWidth) < scrollX)
+			{
+				filmstrip.AutoScrollPosition = new Point(
+					picX, filmstrip.AutoScrollPosition.Y);
+			}
 		}
 
 		private bool readXmlBox(int index)
@@ -317,6 +325,7 @@ namespace HandshakeTool
 			return false;
 		}
 
+
 		private int getXmlBoxPoint(ref string xmlContent, string startTag, string endTag)
 		{
 			int index = xmlContent.IndexOf(startTag) + startTag.Length;
@@ -331,6 +340,7 @@ namespace HandshakeTool
 			Application.Idle += streaming;
 		}
 
+
 		private void disableCamera()
 		{
 			Application.Idle -= streaming;
@@ -342,6 +352,7 @@ namespace HandshakeTool
 		public void fillFilmstrip()
 		{
 			filmstrip.Controls.Clear();
+			nextThumbX = FIRST_THUMB_X;
 			var imageFiles = Files.ImageFolder.GetFiles("*.jpg")
 					.Concat(Files.ImageFolder.GetFiles("*.gif"))
 					.Concat(Files.ImageFolder.GetFiles("*.png"))
@@ -355,8 +366,13 @@ namespace HandshakeTool
 				{
 					appendFilmstrip(img.FullName);
 				}
+				if (tabControl.SelectedTab == imgInfoTab)
+				{
+					showcaseImage(0);
+				}
 			}
 		}
+
 
 		private void appendFilmstrip(string filepath)
 		{
@@ -393,8 +409,8 @@ namespace HandshakeTool
 			nextThumbX += THUMB_WIDTH + THUMB_SPACING;
 		}
 
-		delegate void AppendFilmstripCallback(Panel bigPanel, Panel smallPanel, PictureBox picture);
 
+		delegate void AppendFilmstripCallback(Panel bigPanel, Panel smallPanel, PictureBox picture);
 		private void AppendFilmstrip2(Panel bigPanel, Panel smallPanel, PictureBox picture)
 		{
 			if (filmstrip.InvokeRequired)
@@ -410,18 +426,17 @@ namespace HandshakeTool
 			}
 		}
 
+
 		private void thumb_Click(object sender, EventArgs e)
 		{
 			PictureBox picture = (PictureBox)sender;
 			int index = int.Parse(picture.Name.Remove(0, "thumbPanel".Length));
 			showcaseImage(index);
 
-			appIsChangingTab = true;
+			userIsChangingTab = false;
 			tabControl.SelectedTab = imgInfoTab;
-			appIsChangingTab = false;
+			userIsChangingTab = true;
 		}
-
-
 
 
 		public void OpenImageFolder(object sender, EventArgs e)
@@ -436,30 +451,30 @@ namespace HandshakeTool
 		}
 
 
-
-		private void NewProject(object sender, EventArgs e)
+		private void newProject(object sender, EventArgs e)
 		{
-
-		}
-
-		private void OpenProject(object sender, EventArgs e)
-		{
-			OpenFileDialog fileBrowser = new OpenFileDialog()
+			if (Files.NewProject())
 			{
-				Filter = "Handshake Tool files (*.hst)|*.hst"
-			};
-			if (fileBrowser.ShowDialog() == DialogResult.OK)
-			{
-
+				fillFilmstrip();
 			}
 		}
+
+
+		private void openProject(object sender, EventArgs e)
+		{
+			if (Files.OpenProject())
+			{
+				fillFilmstrip();
+			}
+		}
+
 
 		private void tabChanged(object sender, EventArgs e)
 		{
 
 			if (tabControl.SelectedTab == cameraTab)
 			{
-				if (!appIsChangingTab)
+				if (userIsChangingTab)
 				{
 					smallThumbPanels[currentIndex].BackColor = Color.Black;
 					enableCamera();
@@ -478,7 +493,7 @@ namespace HandshakeTool
 				}
 				else
 				{
-					if (!appIsChangingTab)
+					if (userIsChangingTab)
 					{
 						showcaseImage(currentIndex);
 					}
@@ -490,11 +505,13 @@ namespace HandshakeTool
 			}
 		}
 
+
 		private void btnSaveXml_Click(object sender, EventArgs e)
 		{
 			writeXmlFile();
 			showcaseImage(currentIndex + 1);
 		}
+
 
 		private bool writeXmlFile()
 		{
@@ -542,6 +559,7 @@ namespace HandshakeTool
 				return true;
 			}
 		}
+
 
 		private void HandshakeTool_Enter(object sender, EventArgs e)
 		{
