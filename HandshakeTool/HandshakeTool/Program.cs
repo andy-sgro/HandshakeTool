@@ -9,6 +9,8 @@ namespace HandshakeTool
 {
 	static class Program
 	{
+		public static HandshakeTool app = null;
+
 		/// <summary>
 		/// The main entry point for the application.
 		/// </summary>
@@ -18,7 +20,7 @@ namespace HandshakeTool
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
 
-			HandshakeTool app = new HandshakeTool();
+			app = new HandshakeTool();
 			
 
 			if ((args != null) && (args.Length > 0))
