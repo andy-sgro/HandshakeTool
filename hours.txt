@@ -1,2 +1,0 @@
-Monday
-	7 Handshake Tool workflow, UI, and database

@@ -19,25 +19,44 @@ namespace HandshakeTool
 			get { return projectFolder; }
 			set
 			{
+				// append slash
 				char lastChar = value.FullName[value.FullName.Length - 1];
 				if ((lastChar != '\\') & (lastChar != '/'))
 				{
 					projectFolder = new DirectoryInfo(value.FullName + '\\');
-					ImageFolder = new DirectoryInfo(ProjectFolder.FullName + "Images\\");
-					AnnotationsFolder = new DirectoryInfo(ProjectFolder.FullName + "Annotations\\");
-
-					if (!ImageFolder.Exists)
-					{
-						ImageFolder.Create();
-					}
-					if (!AnnotationsFolder.Exists)
-					{
-						AnnotationsFolder.Create();
-					}
 				}
 				else
 				{
 					projectFolder = value;
+				}
+
+				// set sub folders
+				ImageFolder = new DirectoryInfo(ProjectFolder.FullName + "Images\\");
+				AnnotationsFolder = new DirectoryInfo(ProjectFolder.FullName + "Annotations\\");
+
+				if (!ImageFolder.Exists)
+				{
+					ImageFolder.Create();
+				}
+				else
+				{
+					// ensure Images folder is capitlized
+					DirectoryInfo[] children = ProjectFolder.GetDirectories();
+					foreach (DirectoryInfo child in children)
+					{
+						if (child.Name == "images")
+						{
+							string fakeFolder = ProjectFolder.FullName + "images\\";
+							string superFakeFolder = ProjectFolder.FullName + "anton 123\\";
+							Directory.Move(fakeFolder, superFakeFolder);
+							Directory.Move(superFakeFolder, ImageFolder.FullName);
+							break;
+						}
+					}
+				}
+				if (!AnnotationsFolder.Exists)
+				{
+					AnnotationsFolder.Create();
 				}
 			}
 		}
