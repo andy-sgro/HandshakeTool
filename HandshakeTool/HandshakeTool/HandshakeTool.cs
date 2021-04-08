@@ -16,6 +16,7 @@ namespace HandshakeTool
 		public HandshakeTool()
 		{
 			InitializeComponent();
+			Text = "Handshake Tool";
 		}
 
 

@@ -56,6 +56,7 @@ namespace HandshakeTool
 			userIsChangingCamera = true;
 			enableCamera();
 			fillFilmstrip();
+			Program.app.WindowState = FormWindowState.Maximized;
 		}
 
 
@@ -213,7 +214,7 @@ namespace HandshakeTool
 		}
 
 
-		private void streaming(object sender, System.EventArgs e)
+		private void streaming(object sender, EventArgs e)
 		{
 			mainImage = capture.QueryFrame().ToImage<Bgr, byte>();
 			Bitmap bmp = mainImage.Bitmap;
@@ -321,24 +322,7 @@ namespace HandshakeTool
 
 			currentIndex = index;
 			smallThumbPanels[index].BackColor = Color.White;
-
-			// autoscroll to thumbnail
-			//int picX = bigThumbPanels[index].Location.X;
-			//int picWidth = bigThumbPanels[index].Width;
-			//int scrollX = filmstrip.AutoScrollPosition.X;
-			//int filmWidth = filmstrip.Width;
-			//// if thumbnail is to the left
-			//if ((picX + picWidth) > (scrollX + filmWidth))
-			//{
-			//	filmstrip.AutoScrollPosition = new Point(
-			//		picX - filmWidth + picWidth, filmstrip.AutoScrollPosition.Y);
-			//}
-			//// if thumbnail is to the right
-			//if ((picX + picWidth) < scrollX)
-			//{
-			//	filmstrip.AutoScrollPosition = new Point(
-			//		picX, filmstrip.AutoScrollPosition.Y);
-			//}
+			filmstrip.ScrollControlIntoView(bigThumbPanels[index]);
 
 			// fill title bar
 			Program.app.Text = imgFilepaths[index]
@@ -503,18 +487,6 @@ namespace HandshakeTool
 		}
 
 
-		public void OpenImageFolder(object sender, EventArgs e)
-		{
-			OpenFileDialog fileBrowser = new OpenFileDialog();
-			if (fileBrowser.ShowDialog() == DialogResult.OK)
-			{
-				string imageFolder = fileBrowser.FileName.Remove(fileBrowser.FileName.LastIndexOf('\\') + 1);
-
-
-			}
-		}
-
-
 		private void newProject(object sender, EventArgs e)
 		{
 			if (Files.NewProject())
@@ -553,7 +525,7 @@ namespace HandshakeTool
 			{
 				if (imgFilepaths.Count <= 0)
 				{
-					MessageBox.Show("Please add an image first.");
+					prompt("Please add an image first.");
 					tabControl.SelectedTab = cameraTab;
 				}
 				else
@@ -575,7 +547,7 @@ namespace HandshakeTool
 		{
 			if (string.IsNullOrWhiteSpace(newLabel.Text))
 			{
-				MessageBox.Show("Please Enter a gesture name.");
+				prompt("Please Enter a gesture name.");
 			}
 			else
 			{
@@ -610,18 +582,46 @@ namespace HandshakeTool
 					+ "\r\n\t</size>"
 					+ "\r\n\t<segmented>0</segmented>"
 					+ "\r\n\t<object>"
-					+ "\r\n\t\t<name>" + label + "</name>"
+					+ "\r\n\t\t<name>" + label.Trim() + "</name>"
 					+ "\r\n\t\t<pose>Unspecified</pose>"
 					+ "\r\n\t\t<truncated>0</truncated>"
 					+ "\r\n\t\t<difficult>0</difficult>";
 					
 				if (showingBox)
 				{
+					// swap mins and maxes if nessessary
+					int xmin = 0;
+					int xmax = 0;
+					int ymin = 0;
+					int ymax = 0;
+
+					if (boxStart.X <= boxEnd.X)
+					{
+						xmin = boxStart.X;
+						xmax = boxEnd.X;
+					}
+					else
+					{
+						xmin = boxEnd.X;
+						xmax = boxStart.X;
+					}
+
+					if (boxStart.Y <= boxEnd.Y)
+					{
+						ymin = boxStart.Y;
+						ymax = boxEnd.Y;
+					}
+					else
+					{
+						ymin = boxEnd.Y;
+						ymax = boxStart.Y;
+					}
+
 					xmlContent += "\r\n\t\t<bndbox>"
-						+ "\r\n\t\t\t<xmin>" + boxStart.X + "</xmin>"
-						+ "\r\n\t\t\t<ymin>" + boxStart.Y + "</ymin>"
-						+ "\r\n\t\t\t<xmax>" + boxEnd.X + "</xmax>"
-						+ "\r\n\t\t\t<ymax>" + boxEnd.Y + "</ymax>"
+						+ "\r\n\t\t\t<xmin>" + xmin + "</xmin>"
+						+ "\r\n\t\t\t<ymin>" + ymin + "</ymin>"
+						+ "\r\n\t\t\t<xmax>" + xmax + "</xmax>"
+						+ "\r\n\t\t\t<ymax>" + ymax + "</ymax>"
 						+ "\r\n\t\t</bndbox>";
 				}
 
@@ -632,12 +632,6 @@ namespace HandshakeTool
 				return true;
 			}
 			return false;
-		}
-
-
-		private void HandshakeTool_Enter(object sender, EventArgs e)
-		{
-			MessageBox.Show("focused");
 		}
 
 
@@ -664,7 +658,28 @@ namespace HandshakeTool
 
 		private void batchRelabel(object sender, EventArgs e)
 		{
+			Relabeller relabeller = new Relabeller();
 
+			if (tabControl.SelectedTab == cameraTab)
+			{
+				disableCamera();
+				relabeller.ShowDialog();
+				enableCamera();
+			}
+			else
+			{
+				relabeller.ShowDialog();
+			}
+
+			string xmlFilepath = Files.ChangeExtension(imgFilepaths[currentIndex], ".xml");
+			if (File.Exists(xmlFilepath))
+			{
+				string name = getXmlField(File.ReadAllText(xmlFilepath), "<name>", "</name>");
+				if (name != null)
+				{
+					oldLabel.Text = name;
+				}
+			}
 		}
 
 
@@ -686,58 +701,69 @@ namespace HandshakeTool
 
 		private void separateImagesIntoFolders(object sender, EventArgs e)
 		{
-			FileInfo[] xmlFilepathInfos = Files.ImageFolder.GetFiles("*.xml");
-
-			if (xmlFilepathInfos.Length <= 0)
+			DialogResult confirmResult = DialogResult.Yes;
+			
+			string aggregatedFolder = Files.ImageFolder + "Aggregated" + '\\';
+			if (Directory.Exists(aggregatedFolder))
 			{
-				MessageBox.Show("The images must be labelled before they can be aggregated");
+				confirmResult = MessageBox.Show("This operation will overwrite the Images\\Aggregated folder. Are you sure you want to continue?",
+									 "Warning", MessageBoxButtons.YesNo);
 			}
 			else
 			{
-				string aggregatedFolder = Files.ImageFolder + "aggregated" + '\\';
+				Directory.CreateDirectory(aggregatedFolder);
+			}
 
-				foreach (FileInfo xmlFilepathInfo in xmlFilepathInfos)
+			if (confirmResult == DialogResult.Yes)
+			{
+				// delete everything in the aggregated folder
+				foreach (string folder in Directory.GetDirectories(aggregatedFolder))
 				{
-					string xmlFilepath = xmlFilepathInfo.FullName;
-					string fileContent = File.ReadAllText(xmlFilepath);
-					int nameIndex = fileContent.IndexOf("<name>");
-					int bndboxIndex = fileContent.IndexOf("<bndbox>");
-
-					if ((nameIndex >= 0) & (bndboxIndex >= 0))
-					{
-						nameIndex += "<name>".Length;
-						int nameTerminator = fileContent.IndexOf("</name>");
-						int nameLength = nameTerminator - nameIndex;
-						string label = fileContent.Substring(nameIndex, nameLength);
-
-						string childFolder = aggregatedFolder + label + '\\';
-
-						if (!Directory.Exists(childFolder))
-						{
-							Directory.CreateDirectory(childFolder);
-						}
-						string filename = getFilename(xmlFilepath);
-						File.Copy(xmlFilepath, childFolder + filename + ".xml", true);
-						string imgFilepath = xmlFilepath.Remove(xmlFilepath.Length - 3, 3) + "jpg";
-						File.Copy(imgFilepath, childFolder + filename + ".jpg");
-					}
+					Directory.Delete(folder, true);
 				}
-				Process.Start(aggregatedFolder);
+
+				// fill the aggregated folder
+				FileInfo[] xmlFilepathInfos = Files.ImageFolder.GetFiles("*.xml");
+
+				if (xmlFilepathInfos.Length <= 0)
+				{
+					prompt("The images must be labelled before they can be aggregated");
+				}
+				else
+				{
+					foreach (FileInfo xmlFilepathInfo in xmlFilepathInfos)
+					{
+						string xmlFilepath = xmlFilepathInfo.FullName;
+						string fileContent = File.ReadAllText(xmlFilepath);
+						int nameIndex = fileContent.IndexOf("<name>");
+						int bndboxIndex = fileContent.IndexOf("<bndbox>");
+
+						if ((nameIndex >= 0) & (bndboxIndex >= 0))
+						{
+							nameIndex += "<name>".Length;
+							int nameTerminator = fileContent.IndexOf("</name>");
+							int nameLength = nameTerminator - nameIndex;
+							string label = fileContent.Substring(nameIndex, nameLength);
+
+							string childFolder = aggregatedFolder + label + '\\';
+
+							if (!Directory.Exists(childFolder))
+							{
+								Directory.CreateDirectory(childFolder);
+							}
+							string filename = Files.GetFilename(xmlFilepath);
+							File.Copy(xmlFilepath, childFolder + filename + ".xml", true);
+							string imgFilepath = xmlFilepath.Remove(xmlFilepath.LastIndexOf('.') + 1) + "jpg";
+							File.Copy(imgFilepath, childFolder + filename + ".jpg");
+						}
+					}
+					Process.Start(aggregatedFolder);
+				}
 			}
 		}
 
 
-		private static string getFilename(string filepath)
-		{
-			return filepath.Remove(filepath.LastIndexOf('.'))
-				.Remove(0, filepath.LastIndexOf('\\'));
-		}
-
-
-		private static void separateIntoFolders()
-		{
-			
-		}
+		
 
 
 		private Dictionary<string, int> getLabelStats()
@@ -774,19 +800,31 @@ namespace HandshakeTool
 			Dictionary<string, int> labels = getLabelStats();
 
 			string stats = "Images: " + imgFilepaths.Count
-				+ "\nUnique gestures: " + labels.Count;
+				+ "\nUnique Gestures: " + labels.Count;
 
-			foreach (KeyValuePair<string, int> label in labels)
+			if (labels.Count > 0)
 			{
-				stats += "\n   - " + label.Key + ": " + label.Value;
+				stats += "\n\nGesture Stats:";
+				foreach (KeyValuePair<string, int> label in labels)
+				{
+					stats += "\n     " + label.Value + " - " + label.Key;
+				}
 			}
-			MessageBox.Show(stats);
+			prompt(stats);
 		}
 
-
-		private static void countAllLabels()
+		private void prompt(string msg)
 		{
-			
+			if (tabControl.SelectedTab == cameraTab)
+			{
+				disableCamera();
+				MessageBox.Show(msg);
+				enableCamera();
+			}
+			else
+			{
+				MessageBox.Show(msg);
+			}
 		}
 	}
 }

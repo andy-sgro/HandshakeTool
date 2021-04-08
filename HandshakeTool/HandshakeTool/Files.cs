@@ -23,8 +23,8 @@ namespace HandshakeTool
 				if ((lastChar != '\\') & (lastChar != '/'))
 				{
 					projectFolder = new DirectoryInfo(value.FullName + '\\');
-					ImageFolder = new DirectoryInfo(ProjectFolder.FullName + "images\\");
-					AnnotationsFolder = new DirectoryInfo(ProjectFolder.FullName + "annotations\\");
+					ImageFolder = new DirectoryInfo(ProjectFolder.FullName + "Images\\");
+					AnnotationsFolder = new DirectoryInfo(ProjectFolder.FullName + "Annotations\\");
 
 					if (!ImageFolder.Exists)
 					{
@@ -41,7 +41,20 @@ namespace HandshakeTool
 				}
 			}
 		}
-		
+
+
+		public static string GetFilename(string filepath)
+		{
+			return filepath.Remove(filepath.LastIndexOf('.'))
+				.Remove(0, filepath.LastIndexOf('\\'));
+		}
+
+
+		public static string ChangeExtension(string filepath, string newExtension)
+		{
+			return filepath.Remove(filepath.LastIndexOf('.')) + newExtension;
+		}
+
 
 		public static bool NewProject()
 		{

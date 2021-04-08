@@ -25,6 +25,10 @@ bld/
 [Oo]bj/
 [Ll]og/
 images/
+Images/
+everyone's images/
+my_project/
+
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/

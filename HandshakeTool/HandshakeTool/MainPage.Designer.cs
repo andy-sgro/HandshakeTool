@@ -91,7 +91,7 @@ namespace HandshakeTool
             this.modeToolStripMenuItem});
 			this.menuStrip1.Location = new System.Drawing.Point(0, 0);
 			this.menuStrip1.Name = "menuStrip1";
-			this.menuStrip1.Size = new System.Drawing.Size(841, 28);
+			this.menuStrip1.Size = new System.Drawing.Size(841, 30);
 			this.menuStrip1.TabIndex = 1;
 			this.menuStrip1.Text = "menuStrip1";
 			// 
@@ -103,7 +103,7 @@ namespace HandshakeTool
             this.openImageFolderToolStripMenuItem,
             this.exitToolStripMenuItem});
 			this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-			this.fileToolStripMenuItem.Size = new System.Drawing.Size(46, 24);
+			this.fileToolStripMenuItem.Size = new System.Drawing.Size(46, 26);
 			this.fileToolStripMenuItem.Text = "File";
 			// 
 			// newProjectToolStripMenuItem
@@ -142,7 +142,7 @@ namespace HandshakeTool
             this.separateImagesIntoFoldersToolStripMenuItem,
             this.showStatsToolStripMenuItem});
 			this.modeToolStripMenuItem.Name = "modeToolStripMenuItem";
-			this.modeToolStripMenuItem.Size = new System.Drawing.Size(72, 24);
+			this.modeToolStripMenuItem.Size = new System.Drawing.Size(72, 26);
 			this.modeToolStripMenuItem.Text = "Actions";
 			// 
 			// batchRelabelToolStripMenuItem
@@ -184,11 +184,11 @@ namespace HandshakeTool
 			this.tabControl.Controls.Add(this.cameraTab);
 			this.tabControl.Controls.Add(this.imgInfoTab);
 			this.tabControl.Dock = System.Windows.Forms.DockStyle.Left;
-			this.tabControl.Location = new System.Drawing.Point(0, 28);
+			this.tabControl.Location = new System.Drawing.Point(0, 30);
 			this.tabControl.Name = "tabControl";
 			this.tabControl.SelectedIndex = 0;
-			this.tabControl.Size = new System.Drawing.Size(227, 573);
-			this.tabControl.TabIndex = 3;
+			this.tabControl.Size = new System.Drawing.Size(227, 571);
+			this.tabControl.TabIndex = 1;
 			this.tabControl.SelectedIndexChanged += new System.EventHandler(this.tabChanged);
 			// 
 			// cameraTab
@@ -204,7 +204,7 @@ namespace HandshakeTool
 			this.cameraTab.Location = new System.Drawing.Point(4, 25);
 			this.cameraTab.Name = "cameraTab";
 			this.cameraTab.Padding = new System.Windows.Forms.Padding(3);
-			this.cameraTab.Size = new System.Drawing.Size(219, 544);
+			this.cameraTab.Size = new System.Drawing.Size(219, 542);
 			this.cameraTab.TabIndex = 0;
 			this.cameraTab.Text = "Webcam";
 			this.cameraTab.UseVisualStyleBackColor = true;
@@ -212,7 +212,7 @@ namespace HandshakeTool
 			// label4
 			// 
 			this.label4.AutoSize = true;
-			this.label4.Location = new System.Drawing.Point(31, 257);
+			this.label4.Location = new System.Drawing.Point(29, 29);
 			this.label4.Name = "label4";
 			this.label4.Size = new System.Drawing.Size(168, 17);
 			this.label4.TabIndex = 7;
@@ -220,10 +220,10 @@ namespace HandshakeTool
 			// 
 			// optionalGesture
 			// 
-			this.optionalGesture.Location = new System.Drawing.Point(31, 280);
+			this.optionalGesture.Location = new System.Drawing.Point(29, 52);
 			this.optionalGesture.Name = "optionalGesture";
-			this.optionalGesture.Size = new System.Drawing.Size(180, 22);
-			this.optionalGesture.TabIndex = 6;
+			this.optionalGesture.Size = new System.Drawing.Size(168, 22);
+			this.optionalGesture.TabIndex = 2;
 			// 
 			// cameraIndex
 			// 
@@ -232,9 +232,9 @@ namespace HandshakeTool
 			this.cameraIndex.Items.AddRange(new object[] {
             "Front facing camera",
             "Back facing camera"});
-			this.cameraIndex.Location = new System.Drawing.Point(31, 214);
+			this.cameraIndex.Location = new System.Drawing.Point(29, 259);
 			this.cameraIndex.Name = "cameraIndex";
-			this.cameraIndex.Size = new System.Drawing.Size(180, 24);
+			this.cameraIndex.Size = new System.Drawing.Size(168, 24);
 			this.cameraIndex.TabIndex = 5;
 			this.cameraIndex.SelectedIndexChanged += new System.EventHandler(this.changeCamera);
 			// 
@@ -246,7 +246,7 @@ namespace HandshakeTool
             0,
             0,
             65536});
-			this.timePerShot.Location = new System.Drawing.Point(30, 158);
+			this.timePerShot.Location = new System.Drawing.Point(29, 196);
 			this.timePerShot.Maximum = new decimal(new int[] {
             10,
             0,
@@ -258,7 +258,7 @@ namespace HandshakeTool
             0,
             65536});
 			this.timePerShot.Name = "timePerShot";
-			this.timePerShot.Size = new System.Drawing.Size(181, 22);
+			this.timePerShot.Size = new System.Drawing.Size(168, 22);
 			this.timePerShot.TabIndex = 4;
 			this.timePerShot.Value = new decimal(new int[] {
             1,
@@ -273,7 +273,7 @@ namespace HandshakeTool
             0,
             0,
             0});
-			this.numberOfShots.Location = new System.Drawing.Point(31, 74);
+			this.numberOfShots.Location = new System.Drawing.Point(29, 122);
 			this.numberOfShots.Maximum = new decimal(new int[] {
             5000,
             0,
@@ -285,7 +285,7 @@ namespace HandshakeTool
             0,
             0});
 			this.numberOfShots.Name = "numberOfShots";
-			this.numberOfShots.Size = new System.Drawing.Size(180, 22);
+			this.numberOfShots.Size = new System.Drawing.Size(168, 22);
 			this.numberOfShots.TabIndex = 3;
 			this.numberOfShots.Value = new decimal(new int[] {
             100,
@@ -295,10 +295,10 @@ namespace HandshakeTool
 			// 
 			// button1
 			// 
-			this.button1.Location = new System.Drawing.Point(30, 317);
+			this.button1.Location = new System.Drawing.Point(29, 324);
 			this.button1.Name = "button1";
-			this.button1.Size = new System.Drawing.Size(105, 34);
-			this.button1.TabIndex = 2;
+			this.button1.Size = new System.Drawing.Size(107, 40);
+			this.button1.TabIndex = 6;
 			this.button1.Text = "Take Photos";
 			this.button1.UseVisualStyleBackColor = true;
 			this.button1.Click += new System.EventHandler(this.shootBtn_Click);
@@ -306,7 +306,7 @@ namespace HandshakeTool
 			// label2
 			// 
 			this.label2.AutoSize = true;
-			this.label2.Location = new System.Drawing.Point(28, 112);
+			this.label2.Location = new System.Drawing.Point(27, 167);
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(109, 17);
 			this.label2.TabIndex = 1;
@@ -315,7 +315,7 @@ namespace HandshakeTool
 			// label1
 			// 
 			this.label1.AutoSize = true;
-			this.label1.Location = new System.Drawing.Point(28, 37);
+			this.label1.Location = new System.Drawing.Point(27, 92);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(126, 17);
 			this.label1.TabIndex = 0;
@@ -344,7 +344,7 @@ namespace HandshakeTool
 			this.oldLabel.Name = "oldLabel";
 			this.oldLabel.ReadOnly = true;
 			this.oldLabel.Size = new System.Drawing.Size(154, 22);
-			this.oldLabel.TabIndex = 7;
+			this.oldLabel.TabIndex = 2;
 			// 
 			// clearBox
 			// 
@@ -373,7 +373,7 @@ namespace HandshakeTool
 			this.clearLabel.Location = new System.Drawing.Point(32, 259);
 			this.clearLabel.Name = "clearLabel";
 			this.clearLabel.Size = new System.Drawing.Size(178, 21);
-			this.clearLabel.TabIndex = 3;
+			this.clearLabel.TabIndex = 5;
 			this.clearLabel.Text = "Clear Name Upon Save";
 			this.clearLabel.UseVisualStyleBackColor = true;
 			// 
@@ -382,7 +382,7 @@ namespace HandshakeTool
 			this.btnSaveXml.Location = new System.Drawing.Point(29, 187);
 			this.btnSaveXml.Name = "btnSaveXml";
 			this.btnSaveXml.Size = new System.Drawing.Size(154, 43);
-			this.btnSaveXml.TabIndex = 2;
+			this.btnSaveXml.TabIndex = 4;
 			this.btnSaveXml.Text = "Save Gesture";
 			this.btnSaveXml.UseVisualStyleBackColor = true;
 			this.btnSaveXml.Click += new System.EventHandler(this.btnSaveXml_Click);
@@ -392,7 +392,7 @@ namespace HandshakeTool
 			this.newLabel.Location = new System.Drawing.Point(29, 130);
 			this.newLabel.Name = "newLabel";
 			this.newLabel.Size = new System.Drawing.Size(154, 22);
-			this.newLabel.TabIndex = 1;
+			this.newLabel.TabIndex = 3;
 			// 
 			// label3
 			// 
@@ -406,9 +406,9 @@ namespace HandshakeTool
 			// viewport
 			// 
 			this.viewport.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.viewport.Location = new System.Drawing.Point(227, 28);
+			this.viewport.Location = new System.Drawing.Point(227, 30);
 			this.viewport.Name = "viewport";
-			this.viewport.Size = new System.Drawing.Size(614, 573);
+			this.viewport.Size = new System.Drawing.Size(614, 571);
 			this.viewport.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
 			this.viewport.TabIndex = 0;
 			this.viewport.TabStop = false;
