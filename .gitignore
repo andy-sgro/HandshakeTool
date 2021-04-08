@@ -26,8 +26,7 @@ bld/
 [Ll]og/
 images/
 Images/
-everyone's images/
-my_project/
+ignore/
 
 
 # Visual Studio 2015/2017 cache/options directory
