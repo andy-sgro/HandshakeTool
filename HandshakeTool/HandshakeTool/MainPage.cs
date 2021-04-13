@@ -269,7 +269,15 @@ namespace HandshakeTool
 		}
 
 
-		private void showcaseImage(int index)
+		enum ClickingFrom
+		{
+			Tab,
+			Thumbnail,
+			SaveBtn
+		}
+
+
+		private void showcaseImage(int index, ClickingFrom clickingFrom)
 		{
 			index = clamp(index, 0, imgFilepaths.Count - 1);
 			if (currentIndex >= 0)
@@ -284,22 +292,28 @@ namespace HandshakeTool
 			string labelName = null;
 			string xmlContent = getXmlContent(index);
 
-			// if there isn't a box, optionaly clear box
 			if (xmlContent == null)
 			{
-				if (clearBox.Checked)
-				{
-					showingBox = false;
-				}
 				updateGesturePrompt.Text = "Add New Gesture:";
 			}
-			// if there is a box, always show it
 			else
 			{
+				bool hasBox = (xmlContent.IndexOf("<bndbox>") >= 0);
 				updateGesturePrompt.Text = "Update Gesture:";
-				showingBox = getXmlBox(xmlContent);
 				labelName = getXmlField(xmlContent, "<name>", "</name>");
+
+				// if there isn't a box, only show it if the user has uncheck the 'clear' button and is saving their previous image
+				if (!hasBox)
+				{
+					showingBox = (!clearBox.Checked & (clickingFrom == ClickingFrom.SaveBtn));
+				}
+				// if there is a box, always show it
+				else
+				{
+					showingBox = getXmlBox(xmlContent);
+				}
 			}
+
 
 			if (showingBox)
 			{
@@ -416,7 +430,7 @@ namespace HandshakeTool
 				}
 				if (tabControl.SelectedTab == imgInfoTab)
 				{
-					showcaseImage(0);
+					showcaseImage(0, ClickingFrom.Thumbnail);
 				}
 			}
 		}
@@ -479,7 +493,7 @@ namespace HandshakeTool
 		{
 			PictureBox picture = (PictureBox)sender;
 			int index = int.Parse(picture.Name.Remove(0, "thumbPanel".Length));
-			showcaseImage(index);
+			showcaseImage(index, ClickingFrom.Thumbnail);
 
 			userIsChangingTab = false;
 			tabControl.SelectedTab = imgInfoTab;
@@ -532,7 +546,7 @@ namespace HandshakeTool
 				{
 					if (userIsChangingTab)
 					{
-						showcaseImage(currentIndex);
+						showcaseImage(currentIndex, ClickingFrom.Tab);
 					}
 					viewport.Cursor = Cursors.Cross;
 					viewport.MouseDown += viewport_MouseDown;
@@ -552,7 +566,7 @@ namespace HandshakeTool
 			else
 			{
 				writeXmlFile(currentIndex, newLabel.Text);
-				showcaseImage(currentIndex + 1);
+				showcaseImage(currentIndex + 1, ClickingFrom.SaveBtn);
 			}
 		}
 
