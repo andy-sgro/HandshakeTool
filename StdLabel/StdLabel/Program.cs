@@ -17,7 +17,8 @@ namespace StdLabel
 					+ "2 - Standardize labels\n"
 					+ "3 - Replace a label\n"
 					+ "4 - Separate files into folders\n"
-					+ "5 - Remove unlabeled images\n>>");
+					+ "5 - Remove unlabeled images\n"
+					+ "6 - Reduce bit depth\n>>");
 				
 				switch(Console.ReadKey().KeyChar)
 				{
@@ -48,6 +49,12 @@ namespace StdLabel
 					case ('5'):
 						Console.WriteLine();
 						removeUnlabelledImages();
+						Console.WriteLine();
+						break;
+					
+					case ('6'):
+						Console.WriteLine();
+						fixDepth();
 						Console.WriteLine();
 						break;
 				}
@@ -194,6 +201,27 @@ namespace StdLabel
 				if (!File.Exists(changeExtension(filepath, "xml")))
 				{
 					File.Delete(filepath);
+				}
+			}
+		}
+
+
+		private static void fixDepth()
+		{
+			Console.Write("Enter the folder:\n>>");
+			string[] filepaths = Directory.GetFiles(Console.ReadLine(), "*.xml");
+			foreach (string filepath in filepaths)
+			{
+				string fileContent = File.ReadAllText(filepath);
+				int i = fileContent.IndexOf("<height>");
+				if (i >= 0)
+				{
+					// find second instance of '<height>'
+					i = fileContent.IndexOf('\n', i);
+					i = fileContent.IndexOf("<height>", i);
+					// fix
+					fileContent = fileContent.Remove(i, "<height>3</height>".Length).Insert(i, "<depth>1</depth>");
+					File.WriteAllText(filepath, fileContent);
 				}
 			}
 		}

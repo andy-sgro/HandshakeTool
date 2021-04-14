@@ -64,6 +64,7 @@ namespace HandshakeTool
 			this.viewport = new System.Windows.Forms.PictureBox();
 			this.progressBar = new System.Windows.Forms.ProgressBar();
 			this.fileSystemWatcher1 = new System.IO.FileSystemWatcher();
+			this.exportImagesForTrainingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.menuStrip1.SuspendLayout();
 			this.tabControl.SuspendLayout();
 			this.cameraTab.SuspendLayout();
@@ -91,7 +92,7 @@ namespace HandshakeTool
             this.modeToolStripMenuItem});
 			this.menuStrip1.Location = new System.Drawing.Point(0, 0);
 			this.menuStrip1.Name = "menuStrip1";
-			this.menuStrip1.Size = new System.Drawing.Size(841, 30);
+			this.menuStrip1.Size = new System.Drawing.Size(841, 28);
 			this.menuStrip1.TabIndex = 1;
 			this.menuStrip1.Text = "menuStrip1";
 			// 
@@ -103,7 +104,7 @@ namespace HandshakeTool
             this.openImageFolderToolStripMenuItem,
             this.exitToolStripMenuItem});
 			this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-			this.fileToolStripMenuItem.Size = new System.Drawing.Size(46, 26);
+			this.fileToolStripMenuItem.Size = new System.Drawing.Size(46, 24);
 			this.fileToolStripMenuItem.Text = "File";
 			// 
 			// newProjectToolStripMenuItem
@@ -140,9 +141,10 @@ namespace HandshakeTool
             this.batchRelabelToolStripMenuItem,
             this.createLabelMapToolStripMenuItem,
             this.separateImagesIntoFoldersToolStripMenuItem,
-            this.showStatsToolStripMenuItem});
+            this.showStatsToolStripMenuItem,
+            this.exportImagesForTrainingToolStripMenuItem});
 			this.modeToolStripMenuItem.Name = "modeToolStripMenuItem";
-			this.modeToolStripMenuItem.Size = new System.Drawing.Size(72, 26);
+			this.modeToolStripMenuItem.Size = new System.Drawing.Size(72, 24);
 			this.modeToolStripMenuItem.Text = "Actions";
 			// 
 			// batchRelabelToolStripMenuItem
@@ -184,10 +186,10 @@ namespace HandshakeTool
 			this.tabControl.Controls.Add(this.cameraTab);
 			this.tabControl.Controls.Add(this.imgInfoTab);
 			this.tabControl.Dock = System.Windows.Forms.DockStyle.Left;
-			this.tabControl.Location = new System.Drawing.Point(0, 30);
+			this.tabControl.Location = new System.Drawing.Point(0, 28);
 			this.tabControl.Name = "tabControl";
 			this.tabControl.SelectedIndex = 0;
-			this.tabControl.Size = new System.Drawing.Size(227, 571);
+			this.tabControl.Size = new System.Drawing.Size(227, 573);
 			this.tabControl.TabIndex = 1;
 			this.tabControl.SelectedIndexChanged += new System.EventHandler(this.tabChanged);
 			// 
@@ -204,7 +206,7 @@ namespace HandshakeTool
 			this.cameraTab.Location = new System.Drawing.Point(4, 25);
 			this.cameraTab.Name = "cameraTab";
 			this.cameraTab.Padding = new System.Windows.Forms.Padding(3);
-			this.cameraTab.Size = new System.Drawing.Size(219, 542);
+			this.cameraTab.Size = new System.Drawing.Size(219, 544);
 			this.cameraTab.TabIndex = 0;
 			this.cameraTab.Text = "Webcam";
 			this.cameraTab.UseVisualStyleBackColor = true;
@@ -333,7 +335,7 @@ namespace HandshakeTool
 			this.imgInfoTab.Location = new System.Drawing.Point(4, 25);
 			this.imgInfoTab.Name = "imgInfoTab";
 			this.imgInfoTab.Padding = new System.Windows.Forms.Padding(3);
-			this.imgInfoTab.Size = new System.Drawing.Size(219, 544);
+			this.imgInfoTab.Size = new System.Drawing.Size(219, 542);
 			this.imgInfoTab.TabIndex = 1;
 			this.imgInfoTab.Text = "Image Info";
 			this.imgInfoTab.UseVisualStyleBackColor = true;
@@ -406,9 +408,9 @@ namespace HandshakeTool
 			// viewport
 			// 
 			this.viewport.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.viewport.Location = new System.Drawing.Point(227, 30);
+			this.viewport.Location = new System.Drawing.Point(227, 28);
 			this.viewport.Name = "viewport";
-			this.viewport.Size = new System.Drawing.Size(614, 571);
+			this.viewport.Size = new System.Drawing.Size(614, 573);
 			this.viewport.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
 			this.viewport.TabIndex = 0;
 			this.viewport.TabStop = false;
@@ -427,6 +429,13 @@ namespace HandshakeTool
 			// 
 			this.fileSystemWatcher1.EnableRaisingEvents = true;
 			this.fileSystemWatcher1.SynchronizingObject = this;
+			// 
+			// exportImagesForTrainingToolStripMenuItem
+			// 
+			this.exportImagesForTrainingToolStripMenuItem.Name = "exportImagesForTrainingToolStripMenuItem";
+			this.exportImagesForTrainingToolStripMenuItem.Size = new System.Drawing.Size(294, 26);
+			this.exportImagesForTrainingToolStripMenuItem.Text = "Export Images for Training...";
+			this.exportImagesForTrainingToolStripMenuItem.Click += new System.EventHandler(this.exportImagesForTraining);
 			// 
 			// MainPage
 			// 
@@ -492,5 +501,6 @@ namespace HandshakeTool
 		private System.Windows.Forms.ToolStripMenuItem createLabelMapToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem separateImagesIntoFoldersToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem showStatsToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem exportImagesForTrainingToolStripMenuItem;
 	}
 }

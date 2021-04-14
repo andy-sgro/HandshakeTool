@@ -21,18 +21,25 @@ namespace HandshakeTool
 			Application.SetCompatibleTextRenderingDefault(false);
 
 			app = new HandshakeTool();
-			
 
-			if ((args != null) && (args.Length > 0))
+			bool anoterInstanceIsRunning = System.Diagnostics.Process.GetProcessesByName(Path.GetFileNameWithoutExtension(System.Reflection.Assembly.GetEntryAssembly().Location)).Count() > 1;
+			if (anoterInstanceIsRunning)
 			{
-				string filename = args[0]
-					.Remove(args[0].LastIndexOf('.'))
-					.Remove(0, args[0].LastIndexOf('\\'));
-				Files.ProjectFolder = new DirectoryInfo(args[0].Remove(args[0].LastIndexOf('\\')) + filename + '\\');
-				app.LoadMainPage();				
+				MessageBox.Show("The Handshake Tool is already running.");
 			}
+			else
+			{
+				if ((args != null) && (args.Length > 0))
+				{
+					string filename = args[0]
+						.Remove(args[0].LastIndexOf('.'))
+						.Remove(0, args[0].LastIndexOf('\\'));
+					Files.ProjectFolder = new DirectoryInfo(args[0].Remove(args[0].LastIndexOf('\\')) + filename + '\\');
+					app.LoadMainPage();
+				}
 
-			Application.Run(app);
+				Application.Run(app);
+			}
 		}
 	}
 }

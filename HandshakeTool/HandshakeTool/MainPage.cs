@@ -414,6 +414,10 @@ namespace HandshakeTool
 		public void fillFilmstrip()
 		{
 			filmstrip.Controls.Clear();
+			imgFilepaths.Clear();
+			bigThumbPanels.Clear();
+			smallThumbPanels.Clear();
+			thumbImages.Clear();
 			nextThumbX = FIRST_THUMB_X;
 			var imageFiles = Files.ImageFolder.GetFiles("*.jpg")
 					.Concat(Files.ImageFolder.GetFiles("*.gif"))
@@ -440,35 +444,35 @@ namespace HandshakeTool
 		{
 			int index = imgFilepaths.Count;
 			imgFilepaths.Add(filepath);
-			Panel bigThumbPanel = new Panel();
-			bigThumbPanels.Add(bigThumbPanel);
-			Panel smallThumbPanel = new Panel();
-			smallThumbPanels.Add(smallThumbPanel);
-			PictureBox thumbImage = new PictureBox();
-			thumbImages.Add(thumbImage);
+			//Panel bigThumbPanel = new Panel();
+			//bigThumbPanels.Add(bigThumbPanel);
+			//Panel smallThumbPanel = new Panel();
+			//smallThumbPanels.Add(smallThumbPanel);
+			//PictureBox thumbImage = new PictureBox();
+			//thumbImages.Add(thumbImage);
 
-			bigThumbPanel.Name = "thumbPanel" + index;
-			bigThumbPanel.BackColor = Color.Black;
-			bigThumbPanel.Location = new Point(nextThumbX + filmstrip.AutoScrollPosition.X, nextThumbY);
-			bigThumbPanel.Size = new Size(THUMB_WIDTH, THUMB_HEIGHT);
-			bigThumbPanel.BorderStyle = BorderStyle.None;
+			//bigThumbPanel.Name = "thumbPanel" + index;
+			//bigThumbPanel.BackColor = Color.Black;
+			//bigThumbPanel.Location = new Point(nextThumbX + filmstrip.AutoScrollPosition.X, nextThumbY);
+			//bigThumbPanel.Size = new Size(THUMB_WIDTH, THUMB_HEIGHT);
+			//bigThumbPanel.BorderStyle = BorderStyle.None;
 
-			smallThumbPanel.BackColor = Color.Black;
-			smallThumbPanel.Dock = DockStyle.Fill;
-			smallThumbPanel.Padding = new Padding(THUMB_PADDING);
+			//smallThumbPanel.BackColor = Color.Black;
+			//smallThumbPanel.Dock = DockStyle.Fill;
+			//smallThumbPanel.Padding = new Padding(THUMB_PADDING);
 
-			thumbImage.MouseClick += thumb_Click;
-			thumbImage.Name = "thumbImage" + index;
-			thumbImage.Image = Image.FromFile(filepath);
-			thumbImage.BackColor = Color.Black;
-			thumbImage.Location = new Point(0, 0);
-			thumbImage.BorderStyle = BorderStyle.None;
-			thumbImage.SizeMode = PictureBoxSizeMode.Zoom;
-			thumbImage.Dock = DockStyle.Fill;
+			//thumbImage.MouseClick += thumb_Click;
+			//thumbImage.Name = "thumbImage" + index;
+			//thumbImage.Image = Image.FromFile(filepath);
+			//thumbImage.BackColor = Color.Black;
+			//thumbImage.Location = new Point(0, 0);
+			//thumbImage.BorderStyle = BorderStyle.None;
+			//thumbImage.SizeMode = PictureBoxSizeMode.Zoom;
+			//thumbImage.Dock = DockStyle.Fill;
 
-			AppendFilmstrip2(bigThumbPanel, smallThumbPanel, thumbImage);
+			//AppendFilmstrip2(bigThumbPanel, smallThumbPanel, thumbImage);
 
-			nextThumbX += THUMB_WIDTH + THUMB_SPACING;
+			//nextThumbX += THUMB_WIDTH + THUMB_SPACING;
 		}
 
 
@@ -524,7 +528,7 @@ namespace HandshakeTool
 
 			if (tabControl.SelectedTab == cameraTab)
 			{
-				if (userIsChangingTab)
+				if (userIsChangingTab & (smallThumbPanels.Count > 0))
 				{
 					smallThumbPanels[currentIndex].BackColor = Color.Black;
 					enableCamera();
@@ -592,7 +596,7 @@ namespace HandshakeTool
 					+ "\r\n\t<size>"
 					+ "\r\n\t\t<width>" + imgSize.Width + "</width>"
 					+ "\r\n\t\t<height>" + imgSize.Height + "</height>"
-					+ "\r\n\t\t<height>3</height>"
+					+ "\r\n\t\t<depth>1</depth>"
 					+ "\r\n\t</size>"
 					+ "\r\n\t<segmented>0</segmented>"
 					+ "\r\n\t<object>"
@@ -713,6 +717,88 @@ namespace HandshakeTool
 		}
 
 
+
+		private void exportImagesForTraining(object sender, EventArgs e)
+		{
+			int i = 0;
+			DialogResult confirmResult = DialogResult.Yes;
+
+			string exportedFolder = Files.ImageFolder + "Exported" + '\\';
+			if (Directory.Exists(exportedFolder))
+			{
+				confirmResult = MessageBox.Show("This operation will overwrite the Images\\Exported folder. Are you sure you want to continue?",
+									 "Warning", MessageBoxButtons.YesNo);
+			}
+			else
+			{
+				Directory.CreateDirectory(exportedFolder);
+			}
+
+			if (confirmResult == DialogResult.Yes)
+			{
+				// delete everything in the aggregated folder
+				foreach (string folder in Directory.GetDirectories(exportedFolder))
+				{
+					Directory.Delete(folder, true);
+				}
+
+				// add train and test folders
+				string trainFolder = exportedFolder + "Train\\";
+				string testFolder = exportedFolder + "Test\\";
+				Directory.CreateDirectory(trainFolder);
+				Directory.CreateDirectory(testFolder);
+
+				// fill the aggregated folder
+				Dictionary<int, FileInfo> xmlFilepathInfos = new Dictionary<int, FileInfo>();
+
+				foreach (string imgFilepath in imgFilepaths)
+				{
+					string xmlFilepath = Files.ChangeExtension(imgFilepath, ".xml");
+					if (File.Exists(xmlFilepath))
+					{
+						string xmlContent = File.ReadAllText(xmlFilepath);
+						int nameIndex = xmlContent.IndexOf("<name>");
+						int bndboxIndex = xmlContent.IndexOf("<bndbox>");
+
+						if ((nameIndex >= 0) & (bndboxIndex >= 0))
+						{
+							string baseName = imgFilepath.Remove(imgFilepath.LastIndexOf('.'))
+								.Remove(0, imgFilepath.LastIndexOf('\\') + 1);
+							string newXmlFilepath = Files.ImageFolder.FullName + "Exported\\";
+							string newImgFilepath = Files.ImageFolder.FullName + "Exported\\";
+
+							if ((i++ % 10) == 0)
+							{
+								newXmlFilepath += "Test\\" + baseName + ".xml";
+								newImgFilepath += "Test\\" + baseName + ".jpg";
+							}
+							else
+							{
+								newXmlFilepath += "Train\\" + baseName + ".xml";
+								newImgFilepath += "Train\\" + baseName + ".jpg";
+							}
+
+							File.Copy(xmlFilepath, newXmlFilepath, true);
+							Image<Bgr, byte> image = new Image<Bgr, byte>(imgFilepath);
+							Image<Gray, byte> grey = new Image<Gray, byte>(image.Bitmap);
+							grey.Save(newImgFilepath);
+							//File.Copy(imgFilepath, newImgFilepath, true);
+						}
+					}
+				}
+
+				if (i > 0)
+				{
+					Process.Start(exportedFolder);
+				}
+				else
+				{
+					prompt("The images must be labelled before they can be aggregated.");
+				}
+			}
+		}
+
+
 		private void separateImagesIntoFolders(object sender, EventArgs e)
 		{
 			DialogResult confirmResult = DialogResult.Yes;
@@ -741,7 +827,7 @@ namespace HandshakeTool
 
 				if (xmlFilepathInfos.Length <= 0)
 				{
-					prompt("The images must be labelled before they can be aggregated");
+					prompt("The images must be labelled before they can be aggregated.");
 				}
 				else
 				{
