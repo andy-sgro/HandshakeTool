@@ -444,35 +444,35 @@ namespace HandshakeTool
 		{
 			int index = imgFilepaths.Count;
 			imgFilepaths.Add(filepath);
-			//Panel bigThumbPanel = new Panel();
-			//bigThumbPanels.Add(bigThumbPanel);
-			//Panel smallThumbPanel = new Panel();
-			//smallThumbPanels.Add(smallThumbPanel);
-			//PictureBox thumbImage = new PictureBox();
-			//thumbImages.Add(thumbImage);
+			Panel bigThumbPanel = new Panel();
+			bigThumbPanels.Add(bigThumbPanel);
+			Panel smallThumbPanel = new Panel();
+			smallThumbPanels.Add(smallThumbPanel);
+			PictureBox thumbImage = new PictureBox();
+			thumbImages.Add(thumbImage);
 
-			//bigThumbPanel.Name = "thumbPanel" + index;
-			//bigThumbPanel.BackColor = Color.Black;
-			//bigThumbPanel.Location = new Point(nextThumbX + filmstrip.AutoScrollPosition.X, nextThumbY);
-			//bigThumbPanel.Size = new Size(THUMB_WIDTH, THUMB_HEIGHT);
-			//bigThumbPanel.BorderStyle = BorderStyle.None;
+			bigThumbPanel.Name = "thumbPanel" + index;
+			bigThumbPanel.BackColor = Color.Black;
+			bigThumbPanel.Location = new Point(nextThumbX + filmstrip.AutoScrollPosition.X, nextThumbY);
+			bigThumbPanel.Size = new Size(THUMB_WIDTH, THUMB_HEIGHT);
+			bigThumbPanel.BorderStyle = BorderStyle.None;
 
-			//smallThumbPanel.BackColor = Color.Black;
-			//smallThumbPanel.Dock = DockStyle.Fill;
-			//smallThumbPanel.Padding = new Padding(THUMB_PADDING);
+			smallThumbPanel.BackColor = Color.Black;
+			smallThumbPanel.Dock = DockStyle.Fill;
+			smallThumbPanel.Padding = new Padding(THUMB_PADDING);
 
-			//thumbImage.MouseClick += thumb_Click;
-			//thumbImage.Name = "thumbImage" + index;
-			//thumbImage.Image = Image.FromFile(filepath);
-			//thumbImage.BackColor = Color.Black;
-			//thumbImage.Location = new Point(0, 0);
-			//thumbImage.BorderStyle = BorderStyle.None;
-			//thumbImage.SizeMode = PictureBoxSizeMode.Zoom;
-			//thumbImage.Dock = DockStyle.Fill;
+			thumbImage.MouseClick += thumb_Click;
+			thumbImage.Name = "thumbImage" + index;
+			thumbImage.Image = Image.FromFile(filepath);
+			thumbImage.BackColor = Color.Black;
+			thumbImage.Location = new Point(0, 0);
+			thumbImage.BorderStyle = BorderStyle.None;
+			thumbImage.SizeMode = PictureBoxSizeMode.Zoom;
+			thumbImage.Dock = DockStyle.Fill;
 
-			//AppendFilmstrip2(bigThumbPanel, smallThumbPanel, thumbImage);
+			AppendFilmstrip2(bigThumbPanel, smallThumbPanel, thumbImage);
 
-			//nextThumbX += THUMB_WIDTH + THUMB_SPACING;
+			nextThumbX += THUMB_WIDTH + THUMB_SPACING;
 		}
 
 
@@ -703,6 +703,12 @@ namespace HandshakeTool
 
 		private void createLabelMap(object sender, EventArgs e)
 		{
+			createLabelMap2();
+		}
+		
+			
+		private int createLabelMap2()
+		{
 			string[] labels = getLabelStats().Keys.ToArray();
 			string labelMapContent = "";
 
@@ -714,8 +720,8 @@ namespace HandshakeTool
 
 			File.WriteAllText(Files.AnnotationsFolder + "label_map.pbtxt", labelMapContent);
 			Process.Start(Files.AnnotationsFolder.FullName);
+			return labels.Length;
 		}
-
 
 
 		private void exportImagesForTraining(object sender, EventArgs e)
@@ -925,6 +931,36 @@ namespace HandshakeTool
 			{
 				MessageBox.Show(msg);
 			}
+		}
+
+		private void createTrainingEnvironmentToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			// create label map
+			int labelsCount = createLabelMap2();
+
+			// copy model
+			DirectoryInfo newModel = new DirectoryInfo(Files.ProjectFolder + "Model\\");
+			newModel.Create();
+
+			// edit and save pipeline.config
+			string pipelineConfig = File.ReadAllText("MachineLearning\\Model\\pipeline.config");
+			const string NUM_CLASSES_STR = "num_classes: ";
+			int numClassesIndex = pipelineConfig.IndexOf(NUM_CLASSES_STR) + NUM_CLASSES_STR.Length;
+			pipelineConfig = pipelineConfig.Insert(numClassesIndex, labelsCount.ToString());
+			File.WriteAllText(newModel + "pipeline.config", pipelineConfig);
+
+			// copy pre-trained model
+			Files.CopyDirectory("MachineLearning\\Pretrained-Model", Files.ProjectFolder + "Pretrained-Model", true);
+
+			// copy scripts
+			File.Copy("MachineLearning\\1-generate-tf-record.py", Files.ProjectFolder + "1-generate-tf-record.py");
+			File.Copy("MachineLearning\\2-train.py", Files.ProjectFolder + "2-train.py");
+			File.Copy("MachineLearning\\3-export.py", Files.ProjectFolder + "3-export.py");
+			File.Copy("MachineLearning\\README.txt", Files.ProjectFolder + "README.txt");
+			File.Copy("MachineLearning\\real-time-detection.py", Files.ProjectFolder + "real-time-detection.py");
+			File.Copy("MachineLearning\\test-gestures.py", Files.ProjectFolder + "test-gestures.py");
+
+			Process.Start(Files.ProjectFolder.FullName);
 		}
 	}
 }
