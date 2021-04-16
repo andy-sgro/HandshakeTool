@@ -273,7 +273,8 @@ namespace HandshakeTool
 		{
 			Tab,
 			Thumbnail,
-			SaveBtn
+			SaveBtn,
+			ClearBtn
 		}
 
 
@@ -295,6 +296,7 @@ namespace HandshakeTool
 			if (xmlContent == null)
 			{
 				updateGesturePrompt.Text = "Add New Gesture:";
+				showingBox = (!clearBox.Checked & (clickingFrom == ClickingFrom.SaveBtn));
 			}
 			else
 			{
@@ -961,6 +963,15 @@ namespace HandshakeTool
 			File.Copy("MachineLearning\\test-gestures.py", Files.ProjectFolder + "test-gestures.py");
 
 			Process.Start(Files.ProjectFolder.FullName);
+		}
+
+		private void clearGesture(object sender, EventArgs e)
+		{
+			showingBox = false;
+			string xmliFilepath = Files.ChangeExtension(imgFilepaths[currentIndex], ".xml");
+			File.Delete(xmliFilepath);
+			showcaseImage(currentIndex, ClickingFrom.ClearBtn);
+
 		}
 	}
 }

@@ -43,6 +43,7 @@ namespace HandshakeTool
 			this.separateImagesIntoFoldersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.showStatsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.exportImagesForTrainingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.createTrainingEnvironmentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.tabControl = new System.Windows.Forms.TabControl();
 			this.cameraTab = new System.Windows.Forms.TabPage();
@@ -55,6 +56,7 @@ namespace HandshakeTool
 			this.label2 = new System.Windows.Forms.Label();
 			this.label1 = new System.Windows.Forms.Label();
 			this.imgInfoTab = new System.Windows.Forms.TabPage();
+			this.clearGestureButton = new System.Windows.Forms.Button();
 			this.oldLabel = new System.Windows.Forms.TextBox();
 			this.clearBox = new System.Windows.Forms.CheckBox();
 			this.updateGesturePrompt = new System.Windows.Forms.Label();
@@ -65,7 +67,6 @@ namespace HandshakeTool
 			this.viewport = new System.Windows.Forms.PictureBox();
 			this.progressBar = new System.Windows.Forms.ProgressBar();
 			this.fileSystemWatcher1 = new System.IO.FileSystemWatcher();
-			this.createTrainingEnvironmentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.menuStrip1.SuspendLayout();
 			this.tabControl.SuspendLayout();
 			this.cameraTab.SuspendLayout();
@@ -81,7 +82,7 @@ namespace HandshakeTool
 			this.filmstrip.AutoScroll = true;
 			this.filmstrip.Dock = System.Windows.Forms.DockStyle.Bottom;
 			this.filmstrip.Location = new System.Drawing.Point(0, 496);
-			this.filmstrip.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this.filmstrip.Margin = new System.Windows.Forms.Padding(2);
 			this.filmstrip.Name = "filmstrip";
 			this.filmstrip.Size = new System.Drawing.Size(631, 110);
 			this.filmstrip.TabIndex = 0;
@@ -186,6 +187,13 @@ namespace HandshakeTool
 			this.exportImagesForTrainingToolStripMenuItem.Text = "Export Images for Training...";
 			this.exportImagesForTrainingToolStripMenuItem.Click += new System.EventHandler(this.exportImagesForTraining);
 			// 
+			// createTrainingEnvironmentToolStripMenuItem
+			// 
+			this.createTrainingEnvironmentToolStripMenuItem.Name = "createTrainingEnvironmentToolStripMenuItem";
+			this.createTrainingEnvironmentToolStripMenuItem.Size = new System.Drawing.Size(234, 22);
+			this.createTrainingEnvironmentToolStripMenuItem.Text = "Create Training Environment...";
+			this.createTrainingEnvironmentToolStripMenuItem.Click += new System.EventHandler(this.createTrainingEnvironmentToolStripMenuItem_Click);
+			// 
 			// contextMenuStrip1
 			// 
 			this.contextMenuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
@@ -197,11 +205,12 @@ namespace HandshakeTool
 			this.tabControl.Controls.Add(this.cameraTab);
 			this.tabControl.Controls.Add(this.imgInfoTab);
 			this.tabControl.Dock = System.Windows.Forms.DockStyle.Left;
+			this.tabControl.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.tabControl.Location = new System.Drawing.Point(0, 24);
-			this.tabControl.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this.tabControl.Margin = new System.Windows.Forms.Padding(2);
 			this.tabControl.Name = "tabControl";
 			this.tabControl.SelectedIndex = 0;
-			this.tabControl.Size = new System.Drawing.Size(170, 464);
+			this.tabControl.Size = new System.Drawing.Size(185, 464);
 			this.tabControl.TabIndex = 1;
 			this.tabControl.SelectedIndexChanged += new System.EventHandler(this.tabChanged);
 			// 
@@ -216,10 +225,10 @@ namespace HandshakeTool
 			this.cameraTab.Controls.Add(this.label2);
 			this.cameraTab.Controls.Add(this.label1);
 			this.cameraTab.Location = new System.Drawing.Point(4, 22);
-			this.cameraTab.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this.cameraTab.Margin = new System.Windows.Forms.Padding(2);
 			this.cameraTab.Name = "cameraTab";
-			this.cameraTab.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
-			this.cameraTab.Size = new System.Drawing.Size(162, 438);
+			this.cameraTab.Padding = new System.Windows.Forms.Padding(2);
+			this.cameraTab.Size = new System.Drawing.Size(177, 438);
 			this.cameraTab.TabIndex = 0;
 			this.cameraTab.Text = "Webcam";
 			this.cameraTab.UseVisualStyleBackColor = true;
@@ -230,16 +239,16 @@ namespace HandshakeTool
 			this.label4.Location = new System.Drawing.Point(22, 24);
 			this.label4.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
 			this.label4.Name = "label4";
-			this.label4.Size = new System.Drawing.Size(124, 13);
+			this.label4.Size = new System.Drawing.Size(135, 13);
 			this.label4.TabIndex = 7;
 			this.label4.Text = "Gesture Name (optional):";
 			// 
 			// optionalGesture
 			// 
 			this.optionalGesture.Location = new System.Drawing.Point(22, 42);
-			this.optionalGesture.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this.optionalGesture.Margin = new System.Windows.Forms.Padding(2);
 			this.optionalGesture.Name = "optionalGesture";
-			this.optionalGesture.Size = new System.Drawing.Size(127, 20);
+			this.optionalGesture.Size = new System.Drawing.Size(127, 22);
 			this.optionalGesture.TabIndex = 2;
 			// 
 			// cameraIndex
@@ -250,7 +259,7 @@ namespace HandshakeTool
             "Front facing camera",
             "Back facing camera"});
 			this.cameraIndex.Location = new System.Drawing.Point(22, 210);
-			this.cameraIndex.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this.cameraIndex.Margin = new System.Windows.Forms.Padding(2);
 			this.cameraIndex.Name = "cameraIndex";
 			this.cameraIndex.Size = new System.Drawing.Size(127, 21);
 			this.cameraIndex.TabIndex = 5;
@@ -265,7 +274,7 @@ namespace HandshakeTool
             0,
             65536});
 			this.timePerShot.Location = new System.Drawing.Point(22, 159);
-			this.timePerShot.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this.timePerShot.Margin = new System.Windows.Forms.Padding(2);
 			this.timePerShot.Maximum = new decimal(new int[] {
             10,
             0,
@@ -277,7 +286,7 @@ namespace HandshakeTool
             0,
             65536});
 			this.timePerShot.Name = "timePerShot";
-			this.timePerShot.Size = new System.Drawing.Size(126, 20);
+			this.timePerShot.Size = new System.Drawing.Size(126, 22);
 			this.timePerShot.TabIndex = 4;
 			this.timePerShot.Value = new decimal(new int[] {
             1,
@@ -293,7 +302,7 @@ namespace HandshakeTool
             0,
             0});
 			this.numberOfShots.Location = new System.Drawing.Point(22, 99);
-			this.numberOfShots.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this.numberOfShots.Margin = new System.Windows.Forms.Padding(2);
 			this.numberOfShots.Maximum = new decimal(new int[] {
             5000,
             0,
@@ -305,7 +314,7 @@ namespace HandshakeTool
             0,
             0});
 			this.numberOfShots.Name = "numberOfShots";
-			this.numberOfShots.Size = new System.Drawing.Size(126, 20);
+			this.numberOfShots.Size = new System.Drawing.Size(126, 22);
 			this.numberOfShots.TabIndex = 3;
 			this.numberOfShots.Value = new decimal(new int[] {
             100,
@@ -316,7 +325,7 @@ namespace HandshakeTool
 			// button1
 			// 
 			this.button1.Location = new System.Drawing.Point(22, 263);
-			this.button1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this.button1.Margin = new System.Windows.Forms.Padding(2);
 			this.button1.Name = "button1";
 			this.button1.Size = new System.Drawing.Size(80, 32);
 			this.button1.TabIndex = 6;
@@ -330,7 +339,7 @@ namespace HandshakeTool
 			this.label2.Location = new System.Drawing.Point(20, 136);
 			this.label2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
 			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(82, 13);
+			this.label2.Size = new System.Drawing.Size(88, 13);
 			this.label2.TabIndex = 1;
 			this.label2.Text = "Time per Photo:";
 			// 
@@ -340,12 +349,13 @@ namespace HandshakeTool
 			this.label1.Location = new System.Drawing.Point(20, 75);
 			this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
 			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(95, 13);
+			this.label1.Size = new System.Drawing.Size(104, 13);
 			this.label1.TabIndex = 0;
 			this.label1.Text = "Number of Photos:";
 			// 
 			// imgInfoTab
 			// 
+			this.imgInfoTab.Controls.Add(this.clearGestureButton);
 			this.imgInfoTab.Controls.Add(this.oldLabel);
 			this.imgInfoTab.Controls.Add(this.clearBox);
 			this.imgInfoTab.Controls.Add(this.updateGesturePrompt);
@@ -354,21 +364,32 @@ namespace HandshakeTool
 			this.imgInfoTab.Controls.Add(this.newLabel);
 			this.imgInfoTab.Controls.Add(this.label3);
 			this.imgInfoTab.Location = new System.Drawing.Point(4, 22);
-			this.imgInfoTab.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this.imgInfoTab.Margin = new System.Windows.Forms.Padding(2);
 			this.imgInfoTab.Name = "imgInfoTab";
-			this.imgInfoTab.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
-			this.imgInfoTab.Size = new System.Drawing.Size(162, 440);
+			this.imgInfoTab.Padding = new System.Windows.Forms.Padding(2);
+			this.imgInfoTab.Size = new System.Drawing.Size(177, 438);
 			this.imgInfoTab.TabIndex = 1;
 			this.imgInfoTab.Text = "Image Info";
 			this.imgInfoTab.UseVisualStyleBackColor = true;
 			// 
+			// clearGestureButton
+			// 
+			this.clearGestureButton.Dock = System.Windows.Forms.DockStyle.Bottom;
+			this.clearGestureButton.Location = new System.Drawing.Point(2, 404);
+			this.clearGestureButton.Name = "clearGestureButton";
+			this.clearGestureButton.Size = new System.Drawing.Size(173, 32);
+			this.clearGestureButton.TabIndex = 7;
+			this.clearGestureButton.Text = "Clear Gesture";
+			this.clearGestureButton.UseVisualStyleBackColor = true;
+			this.clearGestureButton.Click += new System.EventHandler(this.clearGesture);
+			// 
 			// oldLabel
 			// 
-			this.oldLabel.Location = new System.Drawing.Point(22, 43);
-			this.oldLabel.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this.oldLabel.Location = new System.Drawing.Point(22, 42);
+			this.oldLabel.Margin = new System.Windows.Forms.Padding(2);
 			this.oldLabel.Name = "oldLabel";
 			this.oldLabel.ReadOnly = true;
-			this.oldLabel.Size = new System.Drawing.Size(116, 20);
+			this.oldLabel.Size = new System.Drawing.Size(133, 22);
 			this.oldLabel.TabIndex = 2;
 			// 
 			// clearBox
@@ -376,10 +397,10 @@ namespace HandshakeTool
 			this.clearBox.AutoSize = true;
 			this.clearBox.Checked = true;
 			this.clearBox.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.clearBox.Location = new System.Drawing.Point(24, 232);
-			this.clearBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this.clearBox.Location = new System.Drawing.Point(24, 228);
+			this.clearBox.Margin = new System.Windows.Forms.Padding(2);
 			this.clearBox.Name = "clearBox";
-			this.clearBox.Size = new System.Drawing.Size(128, 17);
+			this.clearBox.Size = new System.Drawing.Size(131, 17);
 			this.clearBox.TabIndex = 6;
 			this.clearBox.Text = "Clear Box Upon Save";
 			this.clearBox.UseVisualStyleBackColor = true;
@@ -387,30 +408,30 @@ namespace HandshakeTool
 			// updateGesturePrompt
 			// 
 			this.updateGesturePrompt.AutoSize = true;
-			this.updateGesturePrompt.Location = new System.Drawing.Point(22, 80);
+			this.updateGesturePrompt.Location = new System.Drawing.Point(21, 75);
 			this.updateGesturePrompt.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
 			this.updateGesturePrompt.Name = "updateGesturePrompt";
-			this.updateGesturePrompt.Size = new System.Drawing.Size(94, 13);
+			this.updateGesturePrompt.Size = new System.Drawing.Size(100, 13);
 			this.updateGesturePrompt.TabIndex = 4;
 			this.updateGesturePrompt.Text = "Add New Gesture:";
 			// 
 			// clearLabel
 			// 
 			this.clearLabel.AutoSize = true;
-			this.clearLabel.Location = new System.Drawing.Point(24, 210);
-			this.clearLabel.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this.clearLabel.Location = new System.Drawing.Point(24, 206);
+			this.clearLabel.Margin = new System.Windows.Forms.Padding(2);
 			this.clearLabel.Name = "clearLabel";
-			this.clearLabel.Size = new System.Drawing.Size(138, 17);
+			this.clearLabel.Size = new System.Drawing.Size(142, 17);
 			this.clearLabel.TabIndex = 5;
 			this.clearLabel.Text = "Clear Name Upon Save";
 			this.clearLabel.UseVisualStyleBackColor = true;
 			// 
 			// btnSaveXml
 			// 
-			this.btnSaveXml.Location = new System.Drawing.Point(22, 152);
-			this.btnSaveXml.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this.btnSaveXml.Location = new System.Drawing.Point(22, 145);
+			this.btnSaveXml.Margin = new System.Windows.Forms.Padding(2);
 			this.btnSaveXml.Name = "btnSaveXml";
-			this.btnSaveXml.Size = new System.Drawing.Size(116, 35);
+			this.btnSaveXml.Size = new System.Drawing.Size(133, 35);
 			this.btnSaveXml.TabIndex = 4;
 			this.btnSaveXml.Text = "Save Gesture";
 			this.btnSaveXml.UseVisualStyleBackColor = true;
@@ -418,29 +439,29 @@ namespace HandshakeTool
 			// 
 			// newLabel
 			// 
-			this.newLabel.Location = new System.Drawing.Point(22, 106);
-			this.newLabel.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this.newLabel.Location = new System.Drawing.Point(22, 99);
+			this.newLabel.Margin = new System.Windows.Forms.Padding(2);
 			this.newLabel.Name = "newLabel";
-			this.newLabel.Size = new System.Drawing.Size(116, 20);
+			this.newLabel.Size = new System.Drawing.Size(133, 22);
 			this.newLabel.TabIndex = 3;
 			// 
 			// label3
 			// 
 			this.label3.AutoSize = true;
-			this.label3.Location = new System.Drawing.Point(20, 18);
+			this.label3.Location = new System.Drawing.Point(22, 24);
 			this.label3.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
 			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(81, 13);
+			this.label3.Size = new System.Drawing.Size(83, 13);
 			this.label3.TabIndex = 0;
 			this.label3.Text = "Saved Gesture:";
 			// 
 			// viewport
 			// 
 			this.viewport.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.viewport.Location = new System.Drawing.Point(170, 24);
-			this.viewport.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this.viewport.Location = new System.Drawing.Point(185, 24);
+			this.viewport.Margin = new System.Windows.Forms.Padding(2);
 			this.viewport.Name = "viewport";
-			this.viewport.Size = new System.Drawing.Size(461, 464);
+			this.viewport.Size = new System.Drawing.Size(446, 464);
 			this.viewport.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
 			this.viewport.TabIndex = 0;
 			this.viewport.TabStop = false;
@@ -451,7 +472,7 @@ namespace HandshakeTool
 			// 
 			this.progressBar.Dock = System.Windows.Forms.DockStyle.Bottom;
 			this.progressBar.Location = new System.Drawing.Point(0, 488);
-			this.progressBar.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this.progressBar.Margin = new System.Windows.Forms.Padding(2);
 			this.progressBar.Name = "progressBar";
 			this.progressBar.Size = new System.Drawing.Size(631, 8);
 			this.progressBar.TabIndex = 5;
@@ -460,13 +481,6 @@ namespace HandshakeTool
 			// 
 			this.fileSystemWatcher1.EnableRaisingEvents = true;
 			this.fileSystemWatcher1.SynchronizingObject = this;
-			// 
-			// createTrainingEnvironmentToolStripMenuItem
-			// 
-			this.createTrainingEnvironmentToolStripMenuItem.Name = "createTrainingEnvironmentToolStripMenuItem";
-			this.createTrainingEnvironmentToolStripMenuItem.Size = new System.Drawing.Size(234, 22);
-			this.createTrainingEnvironmentToolStripMenuItem.Text = "Create Training Environment...";
-			this.createTrainingEnvironmentToolStripMenuItem.Click += new System.EventHandler(this.createTrainingEnvironmentToolStripMenuItem_Click);
 			// 
 			// MainPage
 			// 
@@ -478,7 +492,7 @@ namespace HandshakeTool
 			this.Controls.Add(this.progressBar);
 			this.Controls.Add(this.filmstrip);
 			this.Controls.Add(this.menuStrip1);
-			this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this.Margin = new System.Windows.Forms.Padding(2);
 			this.Name = "MainPage";
 			this.Size = new System.Drawing.Size(631, 606);
 			this.menuStrip1.ResumeLayout(false);
@@ -535,5 +549,6 @@ namespace HandshakeTool
 		private System.Windows.Forms.ToolStripMenuItem showStatsToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem exportImagesForTrainingToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem createTrainingEnvironmentToolStripMenuItem;
+		private System.Windows.Forms.Button clearGestureButton;
 	}
 }
