@@ -1,4 +1,13 @@
-﻿using System;
+﻿/*
+* FILE			: Relabeller.cs
+* PROJECT		: Handshake Tool
+* PROGRAMMER	: Polytechnica Team - Andy Sgro, Caleb Bolsonello
+* FIRST VERSION : March 12, 2021
+* DESCRIPTION	: This class / dialog allows the user to perform a
+*				  find & replace operation on the labels in the images.
+*/
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -11,10 +20,28 @@ using System.IO;
 
 namespace HandshakeTool
 {
+	/**
+	* NAME	  : Relabeller
+	* PURPOSE : 
+	*	- This class / dialog allows the user to perform a
+	*	  find & replace operation on the labels in the images.
+	*	- The user is directed to this page by the MainPage.cs class.
+	*/
 	public partial class Relabeller : Form
 	{
+		// Contains all the filepaths to the images.
 		string[] imgFilepaths = null;
 
+		/**
+		* \brief	Initilizes the Relabeller.
+		*
+		* \details	Adjusts the min and max values of the numerical scrollers,
+		*			depending on the number of images in the folder.
+		*
+		* \param	N/A
+		*
+		* \return	N/A
+		*/
 		public Relabeller()
 		{
 			InitializeComponent();
@@ -26,6 +53,14 @@ namespace HandshakeTool
 			maxIndex.Value = imgFilepaths.Length;
 		}
 
+
+		/**
+		* \brief	Disables the 'Find' field when the 'Find All' checkbox is checked.
+		*
+		* \param	object sender, EventArgs e : Not used.
+		*
+		* \return	void
+		*/
 		private void findAll_CheckedChanged(object sender, EventArgs e)
 		{
 			if (findAll.Checked)
@@ -42,6 +77,14 @@ namespace HandshakeTool
 		}
 
 
+		/**
+		* \brief	When the 'Find and Replace' button is clicked,
+		*			find and replace the labels, as specified by the user.
+		*
+		* \param	object sender, EventArgs e : Not used.
+		*
+		* \return	void
+		*/
 		private void replaceBtn_Click(object sender, EventArgs e)
 		{
 			int changeCount = 0;
@@ -75,16 +118,41 @@ namespace HandshakeTool
 			MessageBox.Show(changeCount + " out of " + imgFilepaths.Length + " files updated.");
 		}
 
+
+		/**
+		* \brief	When the text is changed, conditionally enable the 
+		*			'Find and Replace' button if the required fields are filled.
+		*
+		* \param	object sender, EventArgs e : Not used.
+		*
+		* \return	void
+		*/
 		private void labelToFind_TextChanged(object sender, EventArgs e)
 		{
 			replaceBtn.Enabled = valid;
 		}
 
+
+		/**
+		* \brief	When the text is changed, conditionally enable the 
+		*			'Find and Replace' button if the required fields are filled.
+		*
+		* \param	object sender, EventArgs e : Not used.
+		*
+		* \return	void
+		*/
 		private void newLabel_TextChanged(object sender, EventArgs e)
 		{
 			replaceBtn.Enabled = valid;
 		}
 
+
+		/**
+		* \brief	Checks if the required fields are filled.
+		*
+		* \return	Returns true if all the required feilds are filled.
+		*			Otherwise false is returned.
+		*/
 		private bool valid
 		{
 			get

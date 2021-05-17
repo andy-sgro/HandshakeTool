@@ -18,7 +18,8 @@ namespace StdLabel
 					+ "3 - Replace a label\n"
 					+ "4 - Separate files into folders\n"
 					+ "5 - Remove unlabeled images\n"
-					+ "6 - Reduce bit depth\n>>");
+					+ "6 - Reduce bit depth\n"
+					+ "7 - Flip X\n>>");
 				
 				switch(Console.ReadKey().KeyChar)
 				{
@@ -55,6 +56,12 @@ namespace StdLabel
 					case ('6'):
 						Console.WriteLine();
 						fixDepth();
+						Console.WriteLine();
+						break;
+
+					case ('7'):
+						Console.WriteLine();
+						flipX();
 						Console.WriteLine();
 						break;
 				}
@@ -224,6 +231,62 @@ namespace StdLabel
 					File.WriteAllText(filepath, fileContent);
 				}
 			}
+		}
+
+
+		private static void flipX()
+		{
+			const int WIDTH = 640;
+			
+			Console.Write("Enter the folder:\n>>");
+			string[] filepaths = Directory.GetFiles(Console.ReadLine(), "*.xml");
+			foreach (string filepath in filepaths)
+			{
+				string fileContent = File.ReadAllText(filepath);
+				int xminIndex = fileContent.IndexOf("<xmin>");
+				if (xminIndex >= 0)
+				{
+					int xmin = int.Parse(getXmlField(fileContent, "<xmin>", "</xmin>"));
+					int xmax = int.Parse(getXmlField(fileContent, "<xmax>", "</xmax>"));
+
+					xmin = flipX(xmin, WIDTH);
+					xmax = flipX(xmax, WIDTH);
+
+					setXmlField(ref fileContent, "<xmin>", "</xmin>", xmax.ToString());
+					setXmlField(ref fileContent, "<xmax>", "</xmax>", xmin.ToString());
+					
+					File.WriteAllText(filepath, fileContent);
+				}
+			}
+		}
+
+
+		private static int flipX(int num, int width)
+		{
+			num -= (width / 2);
+			num = -num;
+			return num + (width / 2);
+		}
+
+
+		private static void setXmlField(ref string xmlContent, string startTag, string endTag, string value)
+		{
+			// get xmin
+			int index = xmlContent.IndexOf(startTag) + startTag.Length;
+			int end = xmlContent.IndexOf(endTag);
+			int length = end - index;
+			// put xmin back in
+			xmlContent = xmlContent.Remove(index, length).Insert(index, value);
+		}
+
+
+		private static string getXmlField(string xmlContent, string startTag, string endTag)
+		{
+			// get xmin
+			int index = xmlContent.IndexOf(startTag) + startTag.Length;
+			int end = xmlContent.IndexOf(endTag);
+			int length = end - index;
+			return (xmlContent.Substring(index, length));
 		}
 
 

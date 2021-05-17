@@ -1,4 +1,14 @@
-﻿using System;
+﻿/*
+* FILE			: Program.cs
+* PROJECT		: Handshake Engine
+* PROGRAMMER	: Polytechnica Team - Andy Sgro, Caleb Bolsonello
+* FIRST VERSION : March 12, 2021
+* DESCRIPTION	: This has the Main() function. It opens a project
+*				  if the user clicked on a project, or the start page
+*				  if not.
+*/
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,13 +17,30 @@ using System.IO;
 
 namespace HandshakeTool
 {
+	/**
+	* NAME	  : Program
+	* PURPOSE : 
+	*	- This class is the entry point of the Handshake Tool.
+	*	- It opens a project if the user clicked on a project,
+	*	  or the start page if not.
+	*	- This class uses the Files class to open/start a project,
+	*	  and uses the HandshakeTool class to open the main page
+	*	  when the user opens the project.
+	*/
 	static class Program
 	{
 		public static HandshakeTool app = null;
 
-		/// <summary>
-		/// The main entry point for the application.
-		/// </summary>
+		/**
+		* \brief	The main entry point for the application.
+		*
+		* \details	It opens a project if the user clicked on a project,
+		*			or the start page if not.
+		*
+		* \param	string[] args : The filepath of the project that was opened.
+		*
+		* \return	void
+		*/
 		[STAThread]
 		static void Main(string[] args)
 		{
